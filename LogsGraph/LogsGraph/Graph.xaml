@@ -1,0 +1,14 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:LogsGraph"
+             xmlns:oxy="http://oxyplot.org/wpf" x:Class="LogsGraph.Graph"
+             mc:Ignorable="d" Height="148" Width="836">
+    <Grid >
+
+        <oxy:PlotView x:Name="Plot" Background="#FFDAC646"/>
+
+    </Grid>
+</UserControl>

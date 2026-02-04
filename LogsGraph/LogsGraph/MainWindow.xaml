@@ -10,7 +10,9 @@
     <Grid>
         <TabControl>
             <TabItem Header="Импорт данных">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5">
+                    <local:Graph></local:Graph>
+                </Grid>
             </TabItem>
             <TabItem Header="Графики">
                 <Grid Background="#FF00E5E5">
@@ -37,11 +39,7 @@
                     </StackPanel>
 
                     <!-- Контейнер для графиков -->
-                    <ScrollViewer Grid.Row="1" 
-                      VerticalScrollBarVisibility="Auto"
-                      HorizontalScrollBarVisibility="Disabled">
-                        <StackPanel x:Name="PlotsContainer" />
-                    </ScrollViewer>
+                    <local:GraphsList Grid.Row="1" x:Name="Graphycs"></local:GraphsList>
                 </Grid>
             </TabItem>
         </TabControl>

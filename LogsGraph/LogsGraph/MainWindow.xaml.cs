@@ -32,19 +32,22 @@ namespace LogsGraph
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Добавляем 2 графика при старте для демонстрации
-            AddPlot();
-            AddPlot();
+            //AddPlot();
+            //AddPlot();
+            Graphycs.AddPlot();
+            Graphycs.AddPlot();
         }
 
         // === ДОБАВЛЕНИЕ ГРАФИКА ===
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
-            AddPlot();
+            //AddPlot();
+            Graphycs.AddPlot();
         }
 
         private void AddPlot()
         {
-            _plotCounter++;
+            /*_plotCounter++;
 
             // 1. Создаём модель графика
             var plotModel = new PlotModel { Title = $"График #{_plotCounter}" };
@@ -127,17 +130,13 @@ namespace LogsGraph
             });
             headerPanel.Children.Add(deleteButton);
 
-            /*var contentPanel = new StackPanel();
-            contentPanel.Children.Add(headerPanel);
-            contentPanel.Children.Add(plotView);
 
-            border.Child = contentPanel;*/
 
             // 7. Добавляем в контейнер и список
             PlotsContainer.Children.Add(border);
             _plotViews.Add(plotView);
 
-            UpdateCounter();
+            UpdateCounter();*/
         }
 
         // === УДАЛЕНИЕ ПОСЛЕДНЕГО ГРАФИКА ===
@@ -158,7 +157,7 @@ namespace LogsGraph
             var wrapper = (UIElement)border.Parent; // StackPanel с заголовком
 
             // Удаляем из визуального дерева
-            PlotsContainer.Children.Remove(wrapper);
+            //PlotsContainer.Children.Remove(wrapper);
 
             // Удаляем из списка
             _plotViews.RemoveAt(_plotViews.Count - 1);
@@ -174,7 +173,7 @@ namespace LogsGraph
             if (MessageBox.Show($"Удалить все {_plotViews.Count} графиков?", "Подтверждение",
                 MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                PlotsContainer.Children.Clear();
+                //PlotsContainer.Children.Clear();
                 _plotViews.Clear();
                 UpdateCounter();
             }
