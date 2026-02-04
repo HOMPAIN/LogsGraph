@@ -9,11 +9,11 @@
             d:DesignWidth="800">
     <Grid >
 
-        <oxy:PlotView x:Name="Plot" Background="#FFDAC646"/>
+        <oxy:PlotView x:Name="Plot" Background="#FFDAC646" BorderThickness="1" BorderBrush="Black"/>
         <UniformGrid Rows="6" Columns="1" Width="50" HorizontalAlignment="Left" Margin="5">
             <Button Content="^" />
-            <Button Content="+" />
-            <Button Content="-" />
+            <Button Content="Size +" />
+            <Button Content="Size -" />
             <Button Content="Graphycs" />
             <Button Content="Del" />
             <Button Content="Add" />
