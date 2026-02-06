@@ -4,6 +4,7 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +23,8 @@ namespace LogsGraph
     /// </summary>
     public partial class Graph : UserControl
     {
+        public event EventHandler EventAdd;
+        public event EventHandler EventDell;
         PlotModel PlotModel;
         public Graph()
         {
@@ -54,6 +57,40 @@ namespace LogsGraph
 
             PlotModel.Series.Add(lineSeries);
             Plot.Model = PlotModel;
+        }
+
+        //кнопка скрытия
+        private void ClickHide(object sender, RoutedEventArgs e)
+        {
+
+        }
+        //кнопка увеличения размера
+        private void ClickSizeAdd(object sender, RoutedEventArgs e)
+        {
+            Height *= 1.1;
+        }
+        //кнопка уменьшения размера
+        private void ClickSizeSub(object sender, RoutedEventArgs e)
+        {
+            Height *= 0.9;
+            if (Height < 80) Height = 80;
+        }
+        //кнопка выбор графиков
+        private void ClickGraphSettings(object sender, RoutedEventArgs e)
+        {
+
+        }
+        //кнопка удалить график
+        private void ClickDell(object sender, RoutedEventArgs e)
+        {
+            if (EventDell != null)
+                EventDell(this, EventArgs.Empty);
+        }
+        //кнопка добавить график
+        private void ClickAdd(object sender, RoutedEventArgs e)
+        {
+            if (EventAdd != null)
+                EventAdd(this, EventArgs.Empty);
         }
     }
 }

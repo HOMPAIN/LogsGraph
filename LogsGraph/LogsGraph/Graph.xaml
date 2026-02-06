@@ -11,12 +11,12 @@
 
         <oxy:PlotView x:Name="Plot" Background="#FFDAC646" BorderThickness="1" BorderBrush="Black"/>
         <UniformGrid Rows="6" Columns="1" Width="50" HorizontalAlignment="Left" Margin="5">
-            <Button Content="^" />
-            <Button Content="Size +" />
-            <Button Content="Size -" />
-            <Button Content="Graphycs" />
-            <Button Content="Del" />
-            <Button Content="Add" />
+            <Button Content="^" Click="ClickHide" />
+            <Button Content="Size +" Click="ClickSizeAdd"/>
+            <Button Content="Size -" Click="ClickSizeSub"/>
+            <Button Content="Graphycs" Click="ClickGraphSettings"/>
+            <Button Content="Del" Click="ClickDell"/>
+            <Button Content="Add" Click="ClickAdd"/>
         </UniformGrid>
     </Grid>
 </UserControl>

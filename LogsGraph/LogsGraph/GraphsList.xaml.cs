@@ -28,13 +28,30 @@ namespace LogsGraph
         //добавить график
         public void AddPlot()
         {
-            Graph graph=new Graph();
+            Graph graph = new Graph();
+            graph.EventDell += RemovePlot;
+            graph.EventAdd += AddPlot;
             PlotsContainer.Children.Add(graph);
         }
-        //удалить последний график
-        public void RemovePlot()
+        public void AddPlot(object? _Object, EventArgs _E)
         {
-
+            if(_Object==null)
+            {
+                AddPlot();
+                return;
+            }
+            Graph graph = new Graph();
+            graph.EventDell += RemovePlot;
+            graph.EventAdd += AddPlot;
+            int index = PlotsContainer.Children.IndexOf((UIElement)_Object);
+            PlotsContainer.Children.Insert(index + 1, graph);
         }
+        //удалить последний график
+        public void RemovePlot(object? _Object, EventArgs _E)
+        {
+            if(_Object != null )
+                PlotsContainer.Children.Remove((UIElement)_Object);
+        }
+
     }
 }
