@@ -26,6 +26,7 @@ namespace LogsGraph
         public event EventHandler EventAdd;
         public event EventHandler EventDell;
         PlotModel PlotModel;
+        double HideHeight = 0;
         public Graph()
         {
             InitializeComponent();
@@ -62,7 +63,15 @@ namespace LogsGraph
         //кнопка скрытия
         private void ClickHide(object sender, RoutedEventArgs e)
         {
-
+            HideHeight = Height;
+            BHide.Visibility = Visibility.Visible;
+            Height = 10;
+        }
+        //кнопка раскрытия
+        private void ClickShow(object sender, RoutedEventArgs e)
+        {
+            BHide.Visibility = Visibility.Hidden;
+            Height = HideHeight;
         }
         //кнопка увеличения размера
         private void ClickSizeAdd(object sender, RoutedEventArgs e)

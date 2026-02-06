@@ -18,5 +18,6 @@
             <Button Content="Del" Click="ClickDell"/>
             <Button Content="Add" Click="ClickAdd"/>
         </UniformGrid>
+        <Button x:Name="BHide" Visibility="Hidden" Content="Show" Width="55" HorizontalAlignment="Left" Click="ClickShow"/>
     </Grid>
 </UserControl>
