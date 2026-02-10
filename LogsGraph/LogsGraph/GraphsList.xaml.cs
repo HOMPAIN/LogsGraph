@@ -53,7 +53,7 @@ namespace LogsGraph
             int index = PlotsContainer.Children.IndexOf((UIElement)_Object);
             PlotsContainer.Children.Insert(index + 1, graph);
         }
-
+        //обработка колёсика мыши
         private void Plot_MouseWheel(object sender, MouseWheelEventArgs e)
         {
             PlotView? plot = sender as PlotView;
@@ -81,9 +81,33 @@ namespace LogsGraph
                 plot.Model.InvalidatePlot(false);
             }
         }
-
+        //обработка движения мыши с нажатой правой кнопкой
+        Point old_pos;
         private void Plot_MouseMove(object sender, MouseEventArgs e)
         {
+            Point p = e.GetPosition(this);
+            if (e.RightButton==MouseButtonState.Pressed)
+            {
+                PlotView? plot = sender as PlotView;
+                if (plot == null) return;
+
+                double min = plot.Model.Axes[0].ActualMinimum;
+                double max = plot.Model.Axes[0].ActualMaximum;
+
+                min -= p.X - old_pos.X;
+                max -= p.X - old_pos.X;
+
+                foreach (var graph in PlotsContainer.Children)
+                {
+                    if ((graph as Graph) == null) continue;
+                    plot = ((Graph)graph).Plot;
+
+                    plot.Model.Axes[0].Minimum = min;
+                    plot.Model.Axes[0].Maximum = max;
+                    plot.Model.InvalidatePlot(false);
+                }
+            }
+            old_pos = p;
         }
 
         //удалить последний график

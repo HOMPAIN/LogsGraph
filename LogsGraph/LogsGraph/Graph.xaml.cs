@@ -59,8 +59,9 @@ namespace LogsGraph
             PlotModel.Series.Add(lineSeries);
             Plot.Model = PlotModel;
 
-            //настройка действи мыши на графиках
+            //отлючаем стандартное управление мышкой
             Plot.ActualController.UnbindMouseWheel();
+            Plot.ActualController.UnbindMouseDown(OxyMouseButton.Right);
         }
 
         //кнопка скрытия
