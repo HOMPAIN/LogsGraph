@@ -10,36 +10,12 @@
     <Grid>
         <TabControl>
             <TabItem Header="Импорт данных">
-                <Grid Background="#FFE5E5E5">
-                    <local:Graph></local:Graph>
-                </Grid>
+                <Grid Background="#FFE5E5E5"/>
             </TabItem>
             <TabItem Header="Графики">
                 <Grid Background="#FF00E5E5">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <!-- Кнопки управления -->
-                        <RowDefinition Height="*"/>
-                        <!-- Список графиков -->
-                    </Grid.RowDefinitions>
-
-                    <!-- Панель управления -->
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                        <Button x:Name="AddButton" Content="Добавить график" 
-                    Click="AddButton_Click" Padding="12,6" Margin="0,0,10,0"/>
-
-                        <Button x:Name="RemoveButton" Content="Удалить последний" 
-                    Click="RemoveButton_Click" Padding="12,6" Margin="0,0,10,0"/>
-
-                        <Button x:Name="ClearButton" Content="Очистить всё" 
-                    Click="ClearButton_Click" Padding="12,6" Margin="0,0,10,0"/>
-
-                        <TextBlock x:Name="CounterText" Text="Графиков: 0" 
-                       VerticalAlignment="Center" FontWeight="Bold"/>
-                    </StackPanel>
-
                     <!-- Контейнер для графиков -->
-                    <local:GraphsList Grid.Row="1" x:Name="Graphycs"></local:GraphsList>
+                    <local:GraphsList x:Name="Graphycs"></local:GraphsList>
                 </Grid>
             </TabItem>
         </TabControl>
