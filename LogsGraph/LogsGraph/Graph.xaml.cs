@@ -31,11 +31,15 @@ namespace LogsGraph
         {
             InitializeComponent();
 
-            PlotModel = new PlotModel { Title = $"График #" };
+            PlotModel = new PlotModel { };
+
+            //убрать отступы графика
+            PlotModel.PlotMargins = new OxyThickness(0,2,20,2);//размер подписи и числа на оси 
+            PlotModel.Padding = new OxyThickness(0,0,10,0);//размер разметки оси
 
             // Настройка осей (опционально, но улучшает внешний вид)
-            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "X" });
-            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Y" });
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom });
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Right });
 
             // 2. Создаём серию данных
             var lineSeries = new LineSeries

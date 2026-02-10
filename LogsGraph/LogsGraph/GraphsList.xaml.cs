@@ -63,7 +63,7 @@ namespace LogsGraph
             double max = plot.Model.Axes[0].ActualMaximum;
             double delta = max - min;
             double center = (min + max) * 0.5f;
-
+            
             // Определяем коэффициент масштабирования
             double zoomFactor = e.Delta > 0 ? 0.9 : 1.1; // 0.9 = приблизить, 1.1 = отдалить
             delta *= zoomFactor*0.5;
@@ -94,8 +94,8 @@ namespace LogsGraph
                 double min = plot.Model.Axes[0].ActualMinimum;
                 double max = plot.Model.Axes[0].ActualMaximum;
 
-                min -= p.X - old_pos.X;
-                max -= p.X - old_pos.X;
+                min -= (p.X - old_pos.X) * 0.03;
+                max -= (p.X - old_pos.X) * 0.03;
 
                 foreach (var graph in PlotsContainer.Children)
                 {
