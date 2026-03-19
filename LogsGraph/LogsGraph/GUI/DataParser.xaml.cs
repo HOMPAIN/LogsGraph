@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace LogsGraph.GUI
+namespace LogsGraph
 {
     /// <summary>
     /// Логика взаимодействия для DataParser.xaml
@@ -21,6 +21,11 @@ namespace LogsGraph.GUI
         public DataParser()
         {
             InitializeComponent();
+        }
+
+        private void FileSelect_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

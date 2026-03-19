@@ -10,7 +10,9 @@
     <Grid>
         <TabControl>
             <TabItem Header="Импорт данных">
-                <Grid Background="#FFE5E5E5"/>
+                <Grid Background="#FFE5E5E5">
+                    <local:DataParser ></local:DataParser>
+                </Grid>
             </TabItem>
             <TabItem Header="Графики">
                 <Grid Background="#FF00E5E5">

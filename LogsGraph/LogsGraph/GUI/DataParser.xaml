@@ -3,33 +3,55 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:LogsGraph.GUI"
-             xmlns:oxy="http://oxyplot.org/wpf" x:Class="LogsGraph.GUI.DataParser"
+             xmlns:local="clr-namespace:LogsGraph"
+             xmlns:oxy="http://oxyplot.org/wpf" x:Class="LogsGraph.DataParser"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid Background="#FF345D52">
-        <ListBox x:Name="SelectTemplate" HorizontalAlignment="Left" Height="249" Margin="480,10,0,0" VerticalAlignment="Top" Width="138" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="7*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="7*" />
+                <RowDefinition Height="3*" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
 
-        <GroupBox HorizontalAlignment="Left" Height="450" Header="Files" Margin="623,0,0,0" VerticalAlignment="Center" Width="167" Background="#FFDF9090">
+                <ListBox x:Name="SelectTemplate" HorizontalAlignment="Left" Height="249" Margin="480,10,0,0" VerticalAlignment="Top" Width="138" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+
+                <TextBox x:Name="FilePath" HorizontalAlignment="Left" Height="21" Margin="10,10,0,0" TextWrapping="Wrap" Text="File Path" VerticalAlignment="Top" Width="385"/>
+                <Button x:Name="FileSelect" Content="File Select" HorizontalAlignment="Left" Height="21" Margin="400,10,0,0" VerticalAlignment="Top" Width="61" Click="FileSelect_Click"/>
+
+
+
+                <TextBox HorizontalAlignment="Left" Height="26" Margin="36,98,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="129"/>
+                <Label Content="Разделитель" HorizontalAlignment="Left" Margin="183,98,0,0" VerticalAlignment="Top"/>
+                <TextBox HorizontalAlignment="Left" Height="19" Margin="36,134,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="129"/>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="7*" />
+                    <ColumnDefinition Width="3*" />
+                </Grid.ColumnDefinitions>
+                <oxy:PlotView Grid.Column="0" />
+                <ListBox Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+            </Grid>
+        </Grid>
+
+
+        <GroupBox Grid.Column="1"  Header="Files"   Background="#FFDF9090">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
-                <ListBox x:Name="SelectFile" Grid.Row="0" HorizontalAlignment="Left" Width="157" d:ItemsSource="{d:SampleData ItemCount=5}" Height="390"/>
+                <ListBox x:Name="SelectFile" Grid.Row="0"   d:ItemsSource="{d:SampleData ItemCount=5}" Height="390"/>
                 <Button Grid.Row="1" x:Name="NewFIle" Content="New File" />
             </Grid>
         </GroupBox>
-        <TextBox x:Name="FilePath" HorizontalAlignment="Left" Height="21" Margin="10,10,0,0" TextWrapping="Wrap" Text="File Path" VerticalAlignment="Top" Width="385"/>
-        <Button x:Name="FileSelect" Content="File Select" HorizontalAlignment="Left" Height="21" Margin="400,10,0,0" VerticalAlignment="Top" Width="61"/>
-
-
-        <oxy:PlotView HorizontalAlignment="Left" Height="176" Margin="10,264,0,0" VerticalAlignment="Top" Width="465"/>
-        <ListBox HorizontalAlignment="Left" Height="176" Margin="480,264,0,0" VerticalAlignment="Top" Width="138" d:ItemsSource="{d:SampleData ItemCount=5}"/>
-        <TextBox HorizontalAlignment="Left" Height="26" Margin="36,98,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="129"/>
-        <Label Content="Разделитель" HorizontalAlignment="Left" Margin="183,98,0,0" VerticalAlignment="Top"/>
-        <TextBox HorizontalAlignment="Left" Height="19" Margin="36,134,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="129"/>
-
+        
 
     </Grid>
 </UserControl>
