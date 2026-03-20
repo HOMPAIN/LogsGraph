@@ -7,30 +7,48 @@
              xmlns:oxy="http://oxyplot.org/wpf" x:Class="LogsGraph.DataParser"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Background="#FF345D52">
+    <Grid Background="#FFAED5B8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="7*" />
             <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
+                <RowDefinition Height="25" />
                 <RowDefinition Height="7*" />
                 <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-
-                <ListBox x:Name="SelectTemplate" HorizontalAlignment="Left" Height="249" Margin="480,10,0,0" VerticalAlignment="Top" Width="138" d:ItemsSource="{d:SampleData ItemCount=5}"/>
-
-                <TextBox x:Name="FilePath" HorizontalAlignment="Left" Height="21" Margin="10,10,0,0" TextWrapping="Wrap" Text="File Path" VerticalAlignment="Top" Width="385"/>
-                <Button x:Name="FileSelect" Content="File Select" HorizontalAlignment="Left" Height="21" Margin="400,10,0,0" VerticalAlignment="Top" Width="61" Click="FileSelect_Click"/>
-
-
-
-                <TextBox HorizontalAlignment="Left" Height="26" Margin="36,98,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="129"/>
-                <Label Content="Разделитель" HorizontalAlignment="Left" Margin="183,98,0,0" VerticalAlignment="Top"/>
-                <TextBox HorizontalAlignment="Left" Height="19" Margin="36,134,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="129"/>
+            <!-- строка с адресом файоа -->
+            <Grid Grid.Row="0" Margin="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="70" />
+                </Grid.ColumnDefinitions>
+                <TextBox Grid.Column="0" x:Name="FilePath" TextWrapping="Wrap" Text="File Path"/>
+                <Button Grid.Column="1" x:Name="FileSelect" Content="File Select" Click="FileSelect_Click"/>
             </Grid>
-            <Grid Grid.Row="1">
+            <!-- профиль загрузки -->
+            <GroupBox Grid.Row="1" Header="Профили загрузки файлов">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <!-- параметры выбраного профиля -->
+                    <StackPanel Grid.Column="0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                            <Label Content="Разделитель"/>
+                        </StackPanel>
+                        <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" Width="129"/>
+                    </StackPanel>
+                    <!-- список профилей загрузки -->
+                    <ListBox Grid.Column="1" x:Name="SelectTemplate" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                </Grid>
+            </GroupBox>
+            <!-- предпросмотр графика -->
+            <GroupBox Grid.Row="2" Header="Предпросмотр графиков">
+                <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="7*" />
                     <ColumnDefinition Width="3*" />
@@ -38,20 +56,19 @@
                 <oxy:PlotView Grid.Column="0" />
                 <ListBox Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}"/>
             </Grid>
+            </GroupBox>
         </Grid>
 
-
-        <GroupBox Grid.Column="1"  Header="Files"   Background="#FFDF9090">
+        <!-- Список загруженных файлов -->
+        <GroupBox Grid.Column="1"  Header="Файлы проекта"   Background="#FFDF9090">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
-                <ListBox x:Name="SelectFile" Grid.Row="0"   d:ItemsSource="{d:SampleData ItemCount=5}" Height="390"/>
+                <ListBox x:Name="SelectFile" Grid.Row="0"   d:ItemsSource="{d:SampleData ItemCount=5}" />
                 <Button Grid.Row="1" x:Name="NewFIle" Content="New File" />
             </Grid>
         </GroupBox>
-        
-
     </Grid>
 </UserControl>
