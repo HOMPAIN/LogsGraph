@@ -37,10 +37,25 @@
                     <!-- параметры выбраного профиля -->
                     <StackPanel Grid.Column="0">
                         <StackPanel Orientation="Horizontal">
+                            <Label Content="Имя профиля" Width="150"/>
                             <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
-                            <Label Content="Разделитель"/>
                         </StackPanel>
-                        <TextBox HorizontalAlignment="Left" TextWrapping="Wrap" Text="TextBox" Width="129"/>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Разделитель" Width="150"/>
+                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Игнорировать строк" Width="150"/>
+                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Плавующая точка" Width="150"/>
+                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal">
+                            <Label Content="Общий столбец X" Width="150"/>
+                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                        </StackPanel>
                     </StackPanel>
                     <!-- список профилей загрузки -->
                     <ListBox Grid.Column="1" x:Name="SelectTemplate" d:ItemsSource="{d:SampleData ItemCount=5}"/>
