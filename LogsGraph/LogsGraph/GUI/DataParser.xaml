@@ -25,7 +25,7 @@
                     <ColumnDefinition Width="70" />
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" x:Name="FilePath" TextWrapping="Wrap" Text="File Path"/>
-                <Button Grid.Column="1" x:Name="FileSelect" Content="File Select" Click="FileSelect_Click"/>
+                <Button Grid.Column="1" x:Name="FileSelect" Content="File Select"/>
             </Grid>
             <!-- профиль загрузки -->
             <GroupBox Grid.Row="1" Header="Профили загрузки файлов">
@@ -34,45 +34,55 @@
                         <ColumnDefinition Width="7*" />
                         <ColumnDefinition Width="3*" />
                     </Grid.ColumnDefinitions>
-                    <!-- параметры выбраного профиля -->
-                    <StackPanel Grid.Column="0">
-                        <StackPanel Orientation="Horizontal">
+
+                    <!-- параметры выбранного профиля -->
+                    <StackPanel Grid.Column="0" Margin="5">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                             <Label Content="Имя профиля" Width="150"/>
-                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                            <TextBox x:Name="TxtName" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                             <Label Content="Разделитель" Width="150"/>
-                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                            <TextBox x:Name="TxtSeparator" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                             <Label Content="Игнорировать строк" Width="150"/>
-                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                            <TextBox x:Name="TxtIgnoreRows" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
-                            <Label Content="Плавующая точка" Width="150"/>
-                            <RadioButton Content=",    "></RadioButton>
-                            <RadioButton Content="."></RadioButton>
+
+                        <!-- Группа для плавающей точки -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <Label Content="Плавающая точка" Width="150"/>
+                            <RadioButton x:Name="RbPointComma" GroupName="PointGroup" Content=",    " Margin="0,0,10,0" Checked="Radio_Changed"/>
+                            <RadioButton x:Name="RbPointDot" GroupName="PointGroup" Content="." Checked="Radio_Changed"/>
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal">
+
+                        <!-- Группа для общего столбца X -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                             <Label Content="Общий столбец X" Width="150"/>
-                            <RadioButton Content="Да"></RadioButton>
-                            <RadioButton Content="Нет"></RadioButton>
+                            <!-- Да = MultiX = false (один столбец), Нет = MultiX = true (разные) -->
+                            <!-- Логика инвертирована в коде, если нужно наоборот -->
+                            <RadioButton x:Name="RbXSingle" GroupName="XGroup" Content="Да" Margin="0,0,10,0" Checked="Radio_X_Changed"/>
+                            <RadioButton x:Name="RbXMulti" GroupName="XGroup" Content="Нет" Checked="Radio_X_Changed"/>
                         </StackPanel>
                     </StackPanel>
+
                     <!-- список профилей загрузки -->
-                    <Grid Grid.Column="1">
+                    <Grid Grid.Column="1" Margin="5">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
-                            <RowDefinition Height="20" />
+                            <RowDefinition Height="25" />
                         </Grid.RowDefinitions>
-                        <ListBox Grid.Row="0" x:Name="SelectTemplate" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+
+                        <ListBox x:Name="SelectTemplate" Grid.Row="0" SelectionChanged="SelectTemplate_SelectionChanged"/>
+
                         <Grid Grid.Row="1">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="1*" />
                                 <ColumnDefinition Width="1*" />
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Content="Добавить"></Button>
-                            <Button Grid.Column="1" Content="Удалить"></Button>
+                            <Button x:Name="BtnAdd" Grid.Column="0" Content="Добавить" Click="BtnAdd_Click" Margin="0,0,2,0"/>
+                            <Button x:Name="BtnRemove" Grid.Column="1" Content="Удалить" Click="BtnRemove_Click" Margin="2,0,0,0"/>
                         </Grid>
                     </Grid>
                 </Grid>

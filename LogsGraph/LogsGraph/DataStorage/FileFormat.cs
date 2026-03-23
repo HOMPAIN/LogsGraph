@@ -14,5 +14,10 @@ namespace LogsGraph.DataStorage
         public string PointSimbol=".";//разделите для числа с плавающей точкой
 
         public List<string> CustomMarkers = new List<string>(); //маркеры столбцов на случай если они не описаны в файле
+
+        public override string ToString()
+        {
+            return Name ?? "Без имени";
+        }
     }
 }
