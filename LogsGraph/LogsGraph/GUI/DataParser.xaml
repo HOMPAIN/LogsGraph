@@ -50,15 +50,31 @@
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Плавующая точка" Width="150"/>
-                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                            <RadioButton Content=",    "></RadioButton>
+                            <RadioButton Content="."></RadioButton>
                         </StackPanel>
                         <StackPanel Orientation="Horizontal">
                             <Label Content="Общий столбец X" Width="150"/>
-                            <TextBox TextWrapping="Wrap" Text="TextBox"  Width="129"/>
+                            <RadioButton Content="Да"></RadioButton>
+                            <RadioButton Content="Нет"></RadioButton>
                         </StackPanel>
                     </StackPanel>
                     <!-- список профилей загрузки -->
-                    <ListBox Grid.Column="1" x:Name="SelectTemplate" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <ListBox Grid.Row="0" x:Name="SelectTemplate" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="Добавить"></Button>
+                            <Button Grid.Column="1" Content="Удалить"></Button>
+                        </Grid>
+                    </Grid>
                 </Grid>
             </GroupBox>
             <!-- предпросмотр графика -->

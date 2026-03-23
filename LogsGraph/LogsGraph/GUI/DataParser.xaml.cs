@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LogsGraph.DataStorage;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows;
@@ -18,6 +19,7 @@ namespace LogsGraph
     /// </summary>
     public partial class DataParser : UserControl
     {
+        public List<FileFormat> Templates=new List<FileFormat>();//список профилей
         public DataParser()
         {
             InitializeComponent();
