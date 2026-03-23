@@ -5,6 +5,7 @@ using System.Text;
 
 namespace LogsGraph.DataStorage
 {
+    //формат текстового файла для парсинга
     public class FileFormat
     {
         public string Name;//имя для данного формата
