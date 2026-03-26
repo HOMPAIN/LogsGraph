@@ -7,7 +7,7 @@ using System.Text;
 namespace LogsGraph.DataStorage
 {
     //точка графика
-    struct GraphPoint
+    public struct GraphPoint
     {
         public long X; 
         public double Y;
@@ -19,10 +19,17 @@ namespace LogsGraph.DataStorage
         }
     }
     //один график
-    class GraphData
+    public class GraphData
     {
         public string Name;//имя графика
-        List<GraphPoint> Points= new List<GraphPoint>();//точки графика
+        public List<GraphPoint> Points= new List<GraphPoint>();//точки графика
+
+        public override string ToString()
+        {
+            if (Name == null)
+                return "null";
+            return Name;
+        }
 
         public GraphData()
         {

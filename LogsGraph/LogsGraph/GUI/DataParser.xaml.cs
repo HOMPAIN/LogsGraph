@@ -1,5 +1,8 @@
 ﻿using LogsGraph.DataStorage;
 using Microsoft.Win32;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -22,6 +25,7 @@ namespace LogsGraph
     {
         public List<FileFormat> Templates = new List<FileFormat>();
         private FileFormat _currentTemplate;
+        public List<GraphData>? GraphsData = null;
 
         public DataParser()
         {
@@ -32,6 +36,7 @@ namespace LogsGraph
             // Примечание: List<T> не уведомляет об удалении/добавлении автоматически так хорошо, как ObservableCollection,
             // но вызов Items.Refresh() или переназначение ItemsSource решает проблему отображения новых элементов.
             SelectTemplate.ItemsSource = Templates;
+            GraphsList.ItemsSource = GraphsData;
 
             // Добавим первый элемент для демонстрации
             AddNewTemplate();
@@ -129,7 +134,6 @@ namespace LogsGraph
             if (sender == TxtName)
             {
                 _currentTemplate.Name = TxtName.Text;
-                // ИСПРАВЛЕНИЕ 4: Обновляем элемент в списке, чтобы изменилось имя в ListBox
                 // Так как мы используем простой List, Refresh() перерисует все элементы, подтянув новые имена
                 SelectTemplate.Items.Refresh();
             }
@@ -186,7 +190,8 @@ namespace LogsGraph
                 string extension = System.IO.Path.GetExtension(fullPath);
 
                 // Здесь вы можете вызвать ваш парсер:
-                 var graphs = GraphData.ParseFile(fullPath, _currentTemplate);
+                GraphsData = GraphData.ParseFile(fullPath, _currentTemplate);
+                GraphsList.ItemsSource = GraphsData;
             }
             else
             {
@@ -194,6 +199,48 @@ namespace LogsGraph
                 // Ничего не делаем или логируем отмену
                 return;
             }
+        }
+        //выбор графика для предпросмотра
+        private void GraphsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            //отобращение графика для предпросмотра
+            PlotModel PlotModel = new PlotModel { };
+
+            //убрать отступы графика
+            PlotModel.PlotMargins = new OxyThickness(0, 2, 20, 2);//размер подписи и числа на оси 
+            PlotModel.Padding = new OxyThickness(0, 0, 10, 0);//размер разметки оси
+
+            // Настройка осей (опционально, но улучшает внешний вид)
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom });
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Right });
+
+            // 2. Создаём серию данных
+            var lineSeries = new LineSeries
+            {
+                Title = "Сигнал",
+                Color = OxyColors.Blue,
+                StrokeThickness = 2,
+                MarkerType = MarkerType.None,
+            };
+
+            // Добавляем начальные точки (для примера)
+            GraphData? data = GraphsList.SelectedItem as GraphData;
+            if (data != null)
+            {
+                //если точек много уменьшим толщинц линии, что бы не тормозило
+                if (data.Points.Count > 10000)
+                    lineSeries.StrokeThickness = 1;
+
+                for (int i=0;i<data.Points.Count;i+=1)
+                    lineSeries.Points.Add(new DataPoint(data.Points[i].X, data.Points[i].Y));
+            }
+
+            PlotModel.Series.Add(lineSeries);
+            PrevPlot.Model = PlotModel;
+
+            //отлючаем стандартное управление мышкой
+            PrevPlot.ActualController.UnbindMouseWheel();
+            PrevPlot.ActualController.UnbindMouseDown(OxyMouseButton.Right);
         }
     }
 }

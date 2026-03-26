@@ -94,8 +94,8 @@
                     <ColumnDefinition Width="7*" />
                     <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
-                <oxy:PlotView Grid.Column="0" />
-                <ListBox Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+                <oxy:PlotView x:Name="PrevPlot" Grid.Column="0" />
+                <ListBox x:Name="GraphsList" Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="GraphsList_SelectionChanged"/>
             </Grid>
             </GroupBox>
         </Grid>
