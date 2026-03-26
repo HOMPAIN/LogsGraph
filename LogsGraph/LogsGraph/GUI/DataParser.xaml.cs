@@ -26,6 +26,7 @@ namespace LogsGraph
         public List<FileFormat> Templates = new List<FileFormat>();
         private FileFormat _currentTemplate;
         public List<GraphData>? GraphsData = null;
+        private CancellationTokenSource CTS_FilePArse;//отмена для загрузки файла
 
         public DataParser()
         {
@@ -75,7 +76,6 @@ namespace LogsGraph
             {
                 Name = $"Профиль {Templates.Count + 1}",
                 Separate = ";",
-                PointSimbol = ".",
                 IgnoreRows = 0,
                 MultiX = false
             };
@@ -109,11 +109,10 @@ namespace LogsGraph
             TxtSeparator.Text = f.Separate;
             TxtIgnoreRows.Text = f.IgnoreRows.ToString();
 
-            RbPointComma.IsChecked = (f.PointSimbol == ",");
-            RbPointDot.IsChecked = (f.PointSimbol == ".");
-
             RbXSingle.IsChecked = !f.MultiX;
             RbXMulti.IsChecked = f.MultiX;
+
+            TxDateFormat.Text = f.DateFormat;
         }
 
         private void ClearInputs()
@@ -121,10 +120,9 @@ namespace LogsGraph
             TxtName.Text = "";
             TxtSeparator.Text = "";
             TxtIgnoreRows.Text = "";
-            RbPointComma.IsChecked = false;
-            RbPointDot.IsChecked = false;
             RbXSingle.IsChecked = false;
             RbXMulti.IsChecked = false;
+            TxDateFormat.Text = "";
         }
 
         private void Input_Changed(object sender, TextChangedEventArgs e)
@@ -148,18 +146,16 @@ namespace LogsGraph
                     _currentTemplate.IgnoreRows = rows;
                 }
             }
-        }
 
-        private void Radio_Changed(object sender, RoutedEventArgs e)
-        {
-            if (_currentTemplate == null) return;
-            _currentTemplate.PointSimbol = (RbPointComma.IsChecked == true) ? "," : ".";
+            LoadData();
         }
 
         private void Radio_X_Changed(object sender, RoutedEventArgs e)
         {
             if (_currentTemplate == null) return;
             _currentTemplate.MultiX = (RbXMulti.IsChecked == true);
+
+            LoadData();
         }
 
         private void FileSelect_Click(object sender, RoutedEventArgs e)
@@ -189,9 +185,9 @@ namespace LogsGraph
                 // Только расширение (например: .txt)
                 string extension = System.IO.Path.GetExtension(fullPath);
 
-                // Здесь вы можете вызвать ваш парсер:
-                GraphsData = GraphData.ParseFile(fullPath, _currentTemplate);
-                GraphsList.ItemsSource = GraphsData;
+                FilePath.Text = fullPath;
+
+                LoadData();
             }
             else
             {
@@ -241,6 +237,51 @@ namespace LogsGraph
             //отлючаем стандартное управление мышкой
             PrevPlot.ActualController.UnbindMouseWheel();
             PrevPlot.ActualController.UnbindMouseDown(OxyMouseButton.Right);
+        }
+        //чтение и парсинг файла
+        private async void LoadData()
+        {
+            //если предыдущая загрузка не закончена, отменяем её
+            if (CTS_FilePArse != null)
+                CTS_FilePArse.Cancel();
+
+            // Создаем новый источник отмены
+            CTS_FilePArse = new CancellationTokenSource();
+
+            try
+            {
+                // Блокируем интерфейс или показываем индикатор загрузки
+                LoadStatus.Content = "Загрузка...";
+
+                // Вызов асинхронного метода с передачей токена
+                GraphsData = await GraphData.ParseFileAsync(FilePath.Text, _currentTemplate, CTS_FilePArse.Token);
+                GraphsList.ItemsSource = GraphsData;
+
+                // Работа с результатом
+                LoadStatus.Content = "Данные успешно загружены";
+            }
+            catch (OperationCanceledException)
+            {
+                // Обработка отмены
+            }
+            catch (Exception ex)
+            {
+                // Обработка ошибок
+                LoadStatus.Content = "Ошибка загрузки";
+            }
+            finally
+            {
+                try
+                {
+                    // Возвращаем интерфейс в исходное состояние
+                    if (CTS_FilePArse != null)
+                    {
+                        CTS_FilePArse.Dispose();
+                        CTS_FilePArse = null;
+                    }
+                }
+                catch { }
+            }
         }
     }
 }

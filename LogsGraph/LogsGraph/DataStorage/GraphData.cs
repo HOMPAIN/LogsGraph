@@ -72,7 +72,7 @@ namespace LogsGraph.DataStorage
             if (!xParsed)
             {
                 // Пробуем как число
-                string normalizedX = cleanX.Replace(_Format.PointSimbol, ".");
+                string normalizedX = cleanX.Replace(",", ".");
                 if (double.TryParse(normalizedX, NumberStyles.Any, culture, out double numX))
                 {
                     xValue = (long)numX;
@@ -84,7 +84,7 @@ namespace LogsGraph.DataStorage
             if (!xParsed) return;
 
             // 3. Парсинг Y (Только число)
-            string cleanY = _Y.Trim().Replace(_Format.PointSimbol, ".");
+            string cleanY = _Y.Trim().Replace(",", ".");
             if (!double.TryParse(cleanY, NumberStyles.Any, culture, out yValue))
             {
                 return; // Y не распарсился, точку не добавляем
@@ -148,6 +148,122 @@ namespace LogsGraph.DataStorage
                     for (int j = 0; j < graphs_count; j++)
                         resultGraphs[j].Add(valuse[0], valuse[j+1], _Format);
             }
+
+            return resultGraphs;
+        }
+        /// <summary>
+        /// Асинхронно парсит текстовый файл с возможностью отмены.
+        /// </summary>
+        public static async Task<List<GraphData>> ParseFileAsync(string _File, FileFormat _Format, CancellationToken cancellationToken = default)
+        {
+            // Проверка существования файла (синхронная, быстрая операция)
+            if (!File.Exists(_File))
+                throw new FileNotFoundException($"Файл не найден: {_File}");
+
+            // Проверка отмены в самом начале
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var resultGraphs = new List<GraphData>();
+            int graphs_count = 0;
+
+            // Асинхронное чтение всего файла в память
+            // Для очень огромных файлов (ГБ) лучше использовать построчное чтение через StreamReader, 
+            // но ReadAllLinesAsync проще для реализации логики с заголовками и пропусками.
+            string[] lines = await File.ReadAllLinesAsync(_File, cancellationToken).ConfigureAwait(false);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            CultureInfo culture = CultureInfo.InvariantCulture;
+
+            // Удаление лишних пробелов (можно распараллелить, но для простоты оставим цикл)
+            for (int i = 0; i < lines.Length; i++)
+            {
+                lines[i] = lines[i].Trim();
+            }
+
+            // Чтение заголовка
+            if (_Format.CustomMarkers.Count == 0 && lines.Length > _Format.IgnoreRows)
+            {
+                string headerLine = lines[_Format.IgnoreRows];
+                if (!string.IsNullOrEmpty(headerLine))
+                {
+                    List<string> names = new List<string>(headerLine.Split(new string[] { _Format.Separate }, StringSplitOptions.RemoveEmptyEntries));
+
+                    if (_Format.MultiX)
+                    {
+                        graphs_count = names.Count / 2;
+                        if (graphs_count * 2 != names.Count)
+                            throw new FormatException("Неправильное число столбцов в заголовке (должно быть чётным для MultiX).");
+
+                        for (int i = 0; i < graphs_count; i++)
+                            resultGraphs.Add(new GraphData(names[i * 2 + 1]));
+                    }
+                    else
+                    {
+                        graphs_count = names.Count - 1;
+                        for (int i = 0; i < graphs_count; i++)
+                            resultGraphs.Add(new GraphData(names[i + 1]));
+                    }
+                }
+            }
+            else if (_Format.CustomMarkers.Count > 0)
+            {
+                graphs_count = _Format.CustomMarkers.Count;
+                foreach (var marker in _Format.CustomMarkers)
+                {
+                    resultGraphs.Add(new GraphData(marker));
+                }
+            }
+
+            if (graphs_count == 0) return resultGraphs;
+
+            // Чтение данных
+            int startRowIndex = _Format.IgnoreRows + 1;
+
+            for (int i = startRowIndex; i < lines.Length; i++)
+            {
+                // Периодическая проверка отмены (каждые 100 строк), чтобы не тормозить цикл
+                if (i % 100 == 0)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
+                string line = lines[i];
+                if (string.IsNullOrEmpty(line)) continue;
+
+                string[] values = line.Split(new string[] { _Format.Separate }, StringSplitOptions.None);
+
+                if (_Format.MultiX)
+                {
+                    for (int j = 0; j < graphs_count; j++)
+                    {
+                        int xIndex = j * 2;
+                        int yIndex = j * 2 + 1;
+                        if (yIndex < values.Length)
+                        {
+                            resultGraphs[j].Add(values[xIndex], values[yIndex], _Format);
+                        }
+                    }
+                }
+                else
+                {
+                    string commonX = (values.Length > 0) ? values[0] : "";
+                    for (int j = 0; j < graphs_count; j++)
+                    {
+                        int yIndex = j + 1;
+                        if (yIndex < values.Length)
+                        {
+                            resultGraphs[j].Add(commonX, values[yIndex], _Format);
+                        }
+                    }
+                }
+            }
+
+            // Финальная проверка перед возвратом
+            cancellationToken.ThrowIfCancellationRequested();
+
+            // Удаляем пустые графики
+            resultGraphs.RemoveAll(g => g.Points.Count == 0);
 
             return resultGraphs;
         }

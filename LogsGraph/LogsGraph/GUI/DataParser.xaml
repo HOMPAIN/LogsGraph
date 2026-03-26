@@ -36,42 +36,57 @@
                     </Grid.ColumnDefinitions>
 
                     <!-- параметры выбранного профиля -->
-                    <StackPanel Grid.Column="0" Margin="5">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <Label Content="Имя профиля" Width="150"/>
-                            <TextBox x:Name="TxtName" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <Label Content="Разделитель" Width="150"/>
-                            <TextBox x:Name="TxtSeparator" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
-                        </StackPanel>
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <Label Content="Игнорировать строк" Width="150"/>
-                            <TextBox x:Name="TxtIgnoreRows" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
-                        </StackPanel>
-
-                        <!-- Группа для плавающей точки -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <Label Content="Плавающая точка" Width="150"/>
-                            <RadioButton x:Name="RbPointComma" GroupName="PointGroup" Content=",    " Margin="0,0,10,0" Checked="Radio_Changed"/>
-                            <RadioButton x:Name="RbPointDot" GroupName="PointGroup" Content="." Checked="Radio_Changed"/>
-                        </StackPanel>
-
-                        <!-- Группа для общего столбца X -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                            <Label Content="Общий столбец X" Width="150"/>
-                            <!-- Да = MultiX = false (один столбец), Нет = MultiX = true (разные) -->
-                            <!-- Логика инвертирована в коде, если нужно наоборот -->
-                            <RadioButton x:Name="RbXSingle" GroupName="XGroup" Content="Да" Margin="0,0,10,0" Checked="Radio_X_Changed"/>
-                            <RadioButton x:Name="RbXMulti" GroupName="XGroup" Content="Нет" Checked="Radio_X_Changed"/>
-                        </StackPanel>
-                    </StackPanel>
-
-                    <!-- список профилей загрузки -->
-                    <Grid Grid.Column="1">
+                    <Grid Grid.Column="0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="25" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0"  Margin="5">
+                            <!-- Имя профиля -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Label Content="Имя профиля" Width="150"/>
+                                <TextBox x:Name="TxtName" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
+                            </StackPanel>
+                            <!-- разделитель значений -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Label Content="Разделитель" Width="150"/>
+                                <TextBox x:Name="TxtSeparator" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
+                            </StackPanel>
+                            <!-- число игнорированных слог в начале файла -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Label Content="Игнорировать строк" Width="150"/>
+                                <TextBox x:Name="TxtIgnoreRows" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
+                            </StackPanel>
+
+                            <!-- Группа для общего столбца X -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Label Content="Общий столбец X" Width="150"/>
+                                <!-- Да = MultiX = false (один столбец), Нет = MultiX = true (разные) -->
+                                <!-- Логика инвертирована в коде, если нужно наоборот -->
+                                <RadioButton x:Name="RbXSingle" GroupName="XGroup" Content="Да" Margin="0,0,10,0" Checked="Radio_X_Changed"/>
+                                <RadioButton x:Name="RbXMulti" GroupName="XGroup" Content="Нет" Checked="Radio_X_Changed"/>
+                            </StackPanel>
+
+                            <!-- формат времени -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Label Content="Формат даты" Width="150"/>
+                                <TextBox x:Name="TxDateFormat" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
+                            </StackPanel>
+                        </StackPanel>
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="200" />
+                            </Grid.ColumnDefinitions>
+                            <Label x:Name="LoadStatus" Grid.Column="0" Content="Загрузка"></Label>
+                            <Button Grid.Column="1" Content="Сохранить профиль как"></Button>
+                        </Grid>
+                    </Grid>
+                    <!-- список профилей загрузки -->
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
                         <ListBox x:Name="SelectTemplate" Grid.Row="0" SelectionChanged="SelectTemplate_SelectionChanged"/>
@@ -90,13 +105,13 @@
             <!-- предпросмотр графика -->
             <GroupBox Grid.Row="2" Header="Предпросмотр графиков">
                 <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="7*" />
-                    <ColumnDefinition Width="3*" />
-                </Grid.ColumnDefinitions>
-                <oxy:PlotView x:Name="PrevPlot" Grid.Column="0" />
-                <ListBox x:Name="GraphsList" Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="GraphsList_SelectionChanged"/>
-            </Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="7*" />
+                        <ColumnDefinition Width="3*" />
+                    </Grid.ColumnDefinitions>
+                    <oxy:PlotView x:Name="PrevPlot" Grid.Column="0" />
+                    <ListBox x:Name="GraphsList" Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="GraphsList_SelectionChanged"/>
+                </Grid>
             </GroupBox>
         </Grid>
 
