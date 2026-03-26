@@ -1,4 +1,5 @@
 ﻿using LogsGraph.DataStorage;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -155,6 +156,44 @@ namespace LogsGraph
         {
             if (_currentTemplate == null) return;
             _currentTemplate.MultiX = (RbXMulti.IsChecked == true);
+        }
+
+        private void FileSelect_Click(object sender, RoutedEventArgs e)
+        {
+            // диалог выбора файла с данными
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Настраиваем фильтр
+            openFileDialog.Filter = "Все файлы (*.*)|*.*|Текстовые файлы (*.txt)|*.txt|CSV файлы (*.csv)|*.csv";
+
+            // Устанавливаем фильтр по умолчанию на "Все файлы"
+            openFileDialog.FilterIndex = 1;
+
+            // Показываем диалог
+            // Возвращает true, если пользователь нажал "ОК", и false, если "Отмена"
+            bool? result = openFileDialog.ShowDialog();
+
+            // Обрабатываем результат
+            if (result == true)
+            {
+                // Полный путь к файлу (например: C:\Data\my_file.txt)
+                string fullPath = openFileDialog.FileName;
+
+                // Только имя файла (например: my_file.txt)
+                string fileName = openFileDialog.SafeFileName;
+
+                // Только расширение (например: .txt)
+                string extension = System.IO.Path.GetExtension(fullPath);
+
+                // Здесь вы можете вызвать ваш парсер:
+                 var graphs = GraphData.ParseFile(fullPath, _currentTemplate);
+            }
+            else
+            {
+                // Пользователь нажал "Отмена" или закрыл окно
+                // Ничего не делаем или логируем отмену
+                return;
+            }
         }
     }
 }

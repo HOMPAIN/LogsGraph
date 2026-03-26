@@ -14,7 +14,7 @@
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
-                <RowDefinition Height="25" />
+                <RowDefinition Height="29" />
                 <RowDefinition Height="7*" />
                 <RowDefinition Height="3*" />
             </Grid.RowDefinitions>
@@ -25,7 +25,7 @@
                     <ColumnDefinition Width="70" />
                 </Grid.ColumnDefinitions>
                 <TextBox Grid.Column="0" x:Name="FilePath" TextWrapping="Wrap" Text="File Path"/>
-                <Button Grid.Column="1" x:Name="FileSelect" Content="File Select"/>
+                <Button Grid.Column="1" x:Name="FileSelect" Content="File Select" Click="FileSelect_Click"/>
             </Grid>
             <!-- профиль загрузки -->
             <GroupBox Grid.Row="1" Header="Профили загрузки файлов">
@@ -68,7 +68,7 @@
                     </StackPanel>
 
                     <!-- список профилей загрузки -->
-                    <Grid Grid.Column="1" Margin="5">
+                    <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*" />
                             <RowDefinition Height="25" />
@@ -105,10 +105,17 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
                 <ListBox x:Name="SelectFile" Grid.Row="0"   d:ItemsSource="{d:SampleData ItemCount=5}" />
-                <Button Grid.Row="1" x:Name="NewFIle" Content="New File" />
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Button Grid.Column="0" x:Name="NewFIle" Content="Добавить" Margin="0,0,2,0"/>
+                    <Button Grid.Column="1" x:Name="RemoveFIle" Content="Удалить" Margin="2,0,0,0"/>
+                </Grid>
             </Grid>
         </GroupBox>
     </Grid>

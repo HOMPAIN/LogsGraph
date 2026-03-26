@@ -9,10 +9,10 @@ namespace LogsGraph.DataStorage
     //точка графика
     struct GraphPoint
     {
-        public double X; // Изменил long на double, так как координаты часто бывают дробными
+        public long X; 
         public double Y;
 
-        public GraphPoint(double _X, double _Y)
+        public GraphPoint(long _X, double _Y)
         {
             X = _X;
             Y = _Y;
@@ -24,6 +24,68 @@ namespace LogsGraph.DataStorage
         public string Name;//имя графика
         List<GraphPoint> Points= new List<GraphPoint>();//точки графика
 
+        public GraphData()
+        {
+        }
+        public GraphData(string _Name)
+        {
+            Name = _Name;
+        }
+        public GraphData(string _Name, int _Count)
+        {
+            Name = _Name;
+            Points = new List<GraphPoint>(_Count);
+        }
+        //добавить, запасить значение точки
+        public void Add(string _X, string _Y, FileFormat _Format)
+        {
+            // 1. Проверка на пустые значения
+            if (string.IsNullOrWhiteSpace(_X) || string.IsNullOrWhiteSpace(_Y))
+            {
+                return; // Точки нет, просто выходим
+            }
+
+            CultureInfo culture = CultureInfo.InvariantCulture;
+            long xValue=0;
+            double yValue=0;
+            bool xParsed = false;
+
+            // 2. Парсинг X (Дата или Число)
+            string cleanX = _X.Trim();
+
+            if (!string.IsNullOrEmpty(_Format.DateFormat))
+            {
+                if (DateTime.TryParseExact(cleanX, _Format.DateFormat, culture, DateTimeStyles.AssumeLocal, out DateTime dt))
+                {
+                    xValue = ((DateTimeOffset)dt.ToUniversalTime()).ToUnixTimeSeconds();
+                    xParsed = true;
+                }
+            }
+
+            if (!xParsed)
+            {
+                // Пробуем как число
+                string normalizedX = cleanX.Replace(_Format.PointSimbol, ".");
+                if (double.TryParse(normalizedX, NumberStyles.Any, culture, out double numX))
+                {
+                    xValue = (long)numX;
+                    xParsed = true;
+                }
+            }
+
+            // Если X не распарсился, точку добавить нельзя
+            if (!xParsed) return;
+
+            // 3. Парсинг Y (Только число)
+            string cleanY = _Y.Trim().Replace(_Format.PointSimbol, ".");
+            if (!double.TryParse(cleanY, NumberStyles.Any, culture, out yValue))
+            {
+                return; // Y не распарсился, точку не добавляем
+            }
+
+            // 4. Добавление точки
+            Points.Add(new GraphPoint(xValue, yValue));
+        }
         /// <summary>
         /// Парсит текстовый файл и возвращает список графиков.
         /// </summary>
@@ -31,119 +93,53 @@ namespace LogsGraph.DataStorage
         /// <param name="_Format">Настройки формата парсинга</param>
         public static List<GraphData> ParseFile(string _File, FileFormat _Format)
         {
+            int graphs_count = 0;
             var resultGraphs = new List<GraphData>();
 
+            //чтение файла
             if (!File.Exists(_File))
                 throw new FileNotFoundException($"Файл не найден: {_File}");
 
-            // Временное хранилище для сырых данных перед распределением по графикам
-            // Структура: [Индекс графика] -> Список точек
             var tempPoints = new List<List<GraphPoint>>();
-
-            // Читаем все строки
             var lines = File.ReadAllLines(_File);
+            CultureInfo culture = CultureInfo.InvariantCulture;
 
-            for (int i = _Format.IgnoreRows; i < lines.Length; i++)
+            //удаление лишних пробелов
+            for (int i = 0; i < lines.Length; i++)
+                lines[i] = lines[i].Trim();
+
+            //чтение заголовка
+            if (_Format.CustomMarkers.Count == 0)
             {
-                string line = lines[i].Trim();
-                if (string.IsNullOrEmpty(line)) continue;
-
-                // Разбиваем строку на части
-                string[] parts = line.Split(new string[] { _Format.Separate }, StringSplitOptions.RemoveEmptyEntries);
-
-                // Пропускаем строки, где недостаточно данных хотя бы для одной точки
-                if (parts.Length < 2) continue;
-
-                // Подготавливаем массив чисел из строки с учетом замены разделителя дроби
-                double[] values = new double[parts.Length];
-                try
+                List<string> names = new List<string>(lines[_Format.IgnoreRows].Split(_Format.Separate));
+                names.Remove("");
+                if (_Format.MultiX)
                 {
-                    for (int k = 0; k < parts.Length; k++)
-                    {
-                        // Нормализация числа: заменяем пользовательский разделитель точки на точку (стандарт invariant)
-                        // Или используем конкретную культуру. Здесь простой заменой.
-                        string cleanVal = parts[k].Trim().Replace(_Format.PointSimbol, ".");
-
-                        if (double.TryParse(cleanVal, NumberStyles.Any, CultureInfo.InvariantCulture, out double val))
-                        {
-                            values[k] = val;
-                        }
-                        else
-                        {
-                            // Если число не распарсилось, пропускаем всю строку (или можно обработать ошибку)
-                            goto NextLine;
-                        }
-                    }
-                }
-                catch
-                {
-                    goto NextLine;
-                }
-
-                // Распределение данных по графикам в зависимости от режима MultiX
-                if (!_Format.MultiX)
-                {
-                    // РЕЖIM 1: Общий X для всех
-                    // Столбец 0 - это X. Столбцы 1..N - это Y для графиков 0..N-1
-
-                    double commonX = values[0];
-
-                    // Убеждаемся, что у нас достаточно списков для всех Y
-                    int graphCount = values.Length - 1; // Количество графиков = кол-во столбцов минус 1 (X)
-                    while (tempPoints.Count < graphCount)
-                    {
-                        tempPoints.Add(new List<GraphPoint>());
-                    }
-
-                    // Добавляем точки в каждый график
-                    for (int g = 0; g < graphCount; g++)
-                    {
-                        // Проверяем, есть ли значение Y для этого графика в данной строке
-                        if (g + 1 < values.Length)
-                        {
-                            tempPoints[g].Add(new GraphPoint(commonX, values[g + 1]));
-                        }
-                    }
+                    graphs_count = names.Count / 2;
+                    if (graphs_count * 2 != names.Count)
+                        return null;//неправильное число столбцов, должно быть чётным
+                    for(int i=0;i<graphs_count;i++)
+                        resultGraphs.Add(new GraphData(names[i * 2 + 1], lines.Length - _Format.IgnoreRows));
                 }
                 else
                 {
-                    // РЕЖИМ 2: Индивидуальный X для каждого (Пары X,Y)
-                    // Столбцы: [X1, Y1, X2, Y2, X3, Y3...]
-
-                    int pairsCount = values.Length / 2; // Целочисленное деление, лишние столбцы игнорируются
-
-                    while (tempPoints.Count < pairsCount)
-                    {
-                        tempPoints.Add(new List<GraphPoint>());
-                    }
-
-                    for (int g = 0; g < pairsCount; g++)
-                    {
-                        double xVal = values[g * 2];     // Четный индекс (0, 2, 4...)
-                        double yVal = values[g * 2 + 1]; // Нечетный индекс (1, 3, 5...)
-
-                        tempPoints[g].Add(new GraphPoint(xVal, yVal));
-                    }
+                    graphs_count = names.Count - 1;
+                    for (int i = 0; i < graphs_count; i++)
+                        resultGraphs.Add(new GraphData(names[i + 1], lines.Length - _Format.IgnoreRows));
                 }
-
-            NextLine:;
             }
 
-            // Преобразуем временные списки в объекты GraphData и присваиваем имена
-            for (int i = 0; i < tempPoints.Count; i++)
+            //чтение данных
+            for (int i = (_Format.IgnoreRows+1); i < lines.Length; i++)
             {
-                if (tempPoints[i].Count == 0) continue;
+                string[] valuse = lines[i].Split(_Format.Separate);
 
-                var graph = new GraphData
-                {
-                    Points = tempPoints[i],
-                    // Берем имя из CustomMarkers, если есть, иначе генерируем
-                    Name = (_Format.CustomMarkers != null && i < _Format.CustomMarkers.Count && !string.IsNullOrEmpty(_Format.CustomMarkers[i]))
-                           ? _Format.CustomMarkers[i]
-                           : $"График {i + 1}"
-                };
-
-                resultGraphs.Add(graph);
+                if (_Format.MultiX)
+                    for (int j = 0; j < graphs_count; j++)
+                        resultGraphs[j].Add(valuse[j*2], valuse[j*2+1], _Format);
+                else
+                    for (int j = 0; j < graphs_count; j++)
+                        resultGraphs[j].Add(valuse[0], valuse[j+1], _Format);
             }
 
             return resultGraphs;
