@@ -5,6 +5,7 @@ using OxyPlot.Axes;
 using OxyPlot.Series;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -187,6 +188,21 @@ namespace LogsGraph
 
                 FilePath.Text = fullPath;
 
+                //предпросмотр нескольких строк
+                if (File.Exists(FilePath.Text))
+                {
+                    List<string> rows = File.ReadLines(FilePath.Text).Take(_currentTemplate.IgnoreRows + 3).ToList();
+                    if (rows.Count >= 3)
+                    {
+                        TB_FilePrev.Text = "";
+                        TB_FilePrev.Text += rows[0] + "\n";
+                        TB_FilePrev.Text += rows[1] + "\n";
+                        TB_FilePrev.Text += rows[2] + "\n";
+                    }
+                    else
+                        TB_FilePrev.Text = "";
+                }
+
                 LoadData();
             }
             else
@@ -241,6 +257,8 @@ namespace LogsGraph
         //чтение и парсинг файла
         private async void LoadData()
         {
+            if (_currentTemplate == null)
+                return;
             //если предыдущая загрузка не закончена, отменяем её
             if (CTS_FilePArse != null)
                 CTS_FilePArse.Cancel();
@@ -252,6 +270,9 @@ namespace LogsGraph
             {
                 // Блокируем интерфейс или показываем индикатор загрузки
                 LoadStatus.Content = "Загрузка...";
+                LoadStatus.Foreground = new SolidColorBrush(Colors.Yellow);
+
+
 
                 // Вызов асинхронного метода с передачей токена
                 GraphsData = await GraphData.ParseFileAsync(FilePath.Text, _currentTemplate, CTS_FilePArse.Token);
@@ -259,6 +280,7 @@ namespace LogsGraph
 
                 // Работа с результатом
                 LoadStatus.Content = "Данные успешно загружены";
+                LoadStatus.Foreground = new SolidColorBrush(Colors.Green);
             }
             catch (OperationCanceledException)
             {
@@ -268,6 +290,7 @@ namespace LogsGraph
             {
                 // Обработка ошибок
                 LoadStatus.Content = "Ошибка загрузки";
+                LoadStatus.Foreground = new SolidColorBrush(Colors.Red);
             }
             finally
             {

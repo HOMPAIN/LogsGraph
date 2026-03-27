@@ -263,7 +263,7 @@ namespace LogsGraph.DataStorage
             cancellationToken.ThrowIfCancellationRequested();
 
             // Удаляем пустые графики
-            resultGraphs.RemoveAll(g => g.Points.Count == 0);
+            //resultGraphs.RemoveAll(g => g.Points.Count == 0);
 
             return resultGraphs;
         }
