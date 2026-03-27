@@ -279,7 +279,9 @@ namespace LogsGraph
                 GraphsList.ItemsSource = GraphsData;
 
                 // Работа с результатом
-                LoadStatus.Content = "Данные успешно загружены";
+                LoadStatus.Content = "Данные успешно загружены\n";
+                for(int i=0;i< GraphsData.Count;i++)
+                    LoadStatus.Content+= ""+ GraphsData[i].Name+"("+ GraphsData[i].Points.Count+") ";
                 LoadStatus.Foreground = new SolidColorBrush(Colors.Green);
             }
             catch (OperationCanceledException)
