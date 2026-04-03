@@ -25,9 +25,10 @@ namespace LogsGraph
     public partial class DataParser : UserControl
     {
         public List<FileFormat> Templates = new List<FileFormat>();
-        private FileFormat _currentTemplate;
-        public List<GraphData>? GraphsData = null;
+        private FileFormat _currentTemplate;//выбраный шаблон из списка
+        public List<GraphData>? GraphsData = null;//графики загруженные из файла
         private CancellationTokenSource CTS_FilePArse;//отмена для загрузки файла
+        public WorkSpace WorkSpace;//ссылка на текущий проект
 
         public DataParser()
         {
@@ -39,16 +40,18 @@ namespace LogsGraph
             // но вызов Items.Refresh() или переназначение ItemsSource решает проблему отображения новых элементов.
             SelectTemplate.ItemsSource = Templates;
             GraphsList.ItemsSource = GraphsData;
+            WorkSpace = ((App)Application.Current).WorkSpace;
+            ProjGraphList.ItemsSource = WorkSpace.Graphs;
 
             // Добавим первый элемент для демонстрации
             AddNewTemplate();
         }
-
+        //добавить новый шаблок
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
         {
             AddNewTemplate();
         }
-
+        //удалить шаблон
         private void BtnRemove_Click(object sender, RoutedEventArgs e)
         {
             if (SelectTemplate.SelectedItem is FileFormat selected)
@@ -70,7 +73,7 @@ namespace LogsGraph
                 }
             }
         }
-
+        //добавить новый шаблок
         private void AddNewTemplate()
         {
             var newFormat = new FileFormat
@@ -89,7 +92,7 @@ namespace LogsGraph
             // Сразу выбираем новый элемент, чтобы поля заполнились
             SelectTemplate.SelectedItem = newFormat;
         }
-
+        //выбор шаблона в списке
         private void SelectTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SelectTemplate.SelectedItem is FileFormat format)
@@ -103,7 +106,7 @@ namespace LogsGraph
                 ClearInputs();
             }
         }
-
+        //вывести параметры выделенного шаблона на форму
         private void FillInputsFromObject(FileFormat f)
         {
             TxtName.Text = f.Name;
@@ -115,7 +118,7 @@ namespace LogsGraph
 
             TxDateFormat.Text = f.DateFormat;
         }
-
+        //сброс полей шаблона к значению по умолчанию
         private void ClearInputs()
         {
             TxtName.Text = "";
@@ -307,6 +310,60 @@ namespace LogsGraph
                 }
                 catch { }
             }
+        }
+        //добавить загружженый график в проект
+        private void AddGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if(GraphsList.SelectedItem is GraphData graph)
+            {
+                if (graph.Points.Count > 0)
+                {
+                    WorkSpace.Add(graph);
+                    ProjGraphList.Items.Refresh();
+                }
+            }
+        }
+        //выбор графика в проекте
+        private void ProjGraphList_Selected(object sender, RoutedEventArgs e)
+        {
+            //отобращение графика для предпросмотра
+            PlotModel PlotModel = new PlotModel { };
+
+            //убрать отступы графика
+            PlotModel.PlotMargins = new OxyThickness(0, 2, 20, 2);//размер подписи и числа на оси 
+            PlotModel.Padding = new OxyThickness(0, 0, 10, 0);//размер разметки оси
+
+            // Настройка осей (опционально, но улучшает внешний вид)
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom });
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Right });
+
+            // 2. Создаём серию данных
+            var lineSeries = new LineSeries
+            {
+                Title = "Сигнал",
+                Color = OxyColors.Blue,
+                StrokeThickness = 2,
+                MarkerType = MarkerType.None,
+            };
+
+            // Добавляем начальные точки (для примера)
+            GraphData? data = ProjGraphList.SelectedItem as GraphData;
+            if (data != null)
+            {
+                //если точек много уменьшим толщинц линии, что бы не тормозило
+                if (data.Points.Count > 10000)
+                    lineSeries.StrokeThickness = 1;
+
+                for (int i = 0; i < data.Points.Count; i += 1)
+                    lineSeries.Points.Add(new DataPoint(data.Points[i].X, data.Points[i].Y));
+            }
+
+            PlotModel.Series.Add(lineSeries);
+            Prev2Plot.Model = PlotModel;
+
+            //отлючаем стандартное управление мышкой
+            Prev2Plot.ActualController.UnbindMouseWheel();
+            Prev2Plot.ActualController.UnbindMouseDown(OxyMouseButton.Right);
         }
     }
 }

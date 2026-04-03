@@ -115,28 +115,32 @@
                             <ColumnDefinition Width="7*" />
                             <ColumnDefinition Width="3*" />
                         </Grid.ColumnDefinitions>
-                        <oxy:PlotView x:Name="PrevPlot" Grid.Column="0" />
+                        <Grid Grid.Column="0">
+                            <oxy:PlotView x:Name="PrevPlot" />
+                        </Grid>
                         <ListBox x:Name="GraphsList" Grid.Column="1" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="GraphsList_SelectionChanged"/>
                     </Grid>
                 </Grid>
             </GroupBox>
         </Grid>
 
-        <!-- Список загруженных файлов -->
-        <GroupBox Grid.Column="1"  Header="Файлы проекта"   Background="#FFDF9090">
+        <!-- Список загруженных графиков -->
+        <GroupBox Grid.Column="1"  Header="Графики проекта"   Background="#FFDF9090">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="3*" />
                     <RowDefinition Height="25" />
                 </Grid.RowDefinitions>
-                <ListBox x:Name="SelectFile" Grid.Row="0"   d:ItemsSource="{d:SampleData ItemCount=5}" />
-                <Grid Grid.Row="1">
+                <oxy:PlotView x:Name="Prev2Plot" />
+                <ListBox Grid.Row="1" x:Name="ProjGraphList" d:ItemsSource="{d:SampleData ItemCount=5}" SelectionChanged="ProjGraphList_Selected" />
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
-                    <Button Grid.Column="0" x:Name="NewFIle" Content="Добавить" Margin="0,0,2,0"/>
-                    <Button Grid.Column="1" x:Name="RemoveFIle" Content="Удалить" Margin="2,0,0,0"/>
+                    <Button Grid.Column="0" x:Name="AddGraph" Content="Добавить" Margin="0,0,2,0" Click="AddGraph_Click"/>
+                    <Button Grid.Column="1" x:Name="RemoveGraph" Content="Удалить" Margin="2,0,0,0"/>
                 </Grid>
             </Grid>
         </GroupBox>
