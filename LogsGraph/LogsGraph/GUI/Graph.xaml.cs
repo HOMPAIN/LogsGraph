@@ -1,4 +1,5 @@
 ﻿//WPF кастомный график
+using LogsGraph.DataStorage;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -27,9 +28,21 @@ namespace LogsGraph
         public event EventHandler EventDell;
         PlotModel PlotModel;
         double HideHeight = 0;
-        public Graph()
+
+        WorkSpace WorkSpace;//текущий проект
+        WorkSpacePlot WorkSpacePlot;//настройки текущей области графиков
+        public Graph(WorkSpacePlot _WorkSpacePlot)
         {
+            WorkSpace = ((App)Application.Current).WorkSpace;
+            WorkSpacePlot = _WorkSpacePlot;
+
             InitializeComponent();
+
+            //скрыть окно настроек графиков
+            Settings.Visibility = Visibility.Hidden;
+
+            //заполнение полей настроек
+            TxtName.Text = WorkSpacePlot.Name;
 
             PlotModel = new PlotModel { };
 
@@ -66,6 +79,7 @@ namespace LogsGraph
             //отлючаем стандартное управление мышкой
             Plot.ActualController.UnbindMouseWheel();
             Plot.ActualController.UnbindMouseDown(OxyMouseButton.Right);
+
         }
 
         //кнопка скрытия
@@ -95,7 +109,10 @@ namespace LogsGraph
         //кнопка выбор графиков
         private void ClickGraphSettings(object sender, RoutedEventArgs e)
         {
-
+            if (Settings.Visibility == Visibility.Visible)
+                Settings.Visibility = Visibility.Hidden;
+            else
+                Settings.Visibility = Visibility.Visible;
         }
         //кнопка удалить график
         private void ClickDell(object sender, RoutedEventArgs e)
@@ -108,6 +125,11 @@ namespace LogsGraph
         {
             if (EventAdd != null)
                 EventAdd(this, EventArgs.Empty);
+        }
+        //изменение имени
+        private void TxtName_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            WorkSpacePlot.Name = TxtName.Text;
         }
     }
 }

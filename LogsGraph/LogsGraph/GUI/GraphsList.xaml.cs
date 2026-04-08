@@ -1,5 +1,6 @@
 ﻿//WPF компонент для отображения списка графиков
 
+using LogsGraph.DataStorage;
 using OxyPlot.Wpf;
 using System;
 using System.Collections.Generic;
@@ -21,8 +22,10 @@ namespace LogsGraph
     /// </summary>
     public partial class GraphsList : UserControl
     {
+        WorkSpace WorkSpace;//текущий проект
         public GraphsList()
         {
+            WorkSpace = ((App)Application.Current).WorkSpace;
             InitializeComponent();
             AddPlot();
             AddPlot();
@@ -31,7 +34,7 @@ namespace LogsGraph
         //добавить график
         public void AddPlot()
         {
-            Graph graph = new Graph();
+            Graph graph = new Graph(WorkSpace.AddPlot());
             graph.EventDell += RemovePlot;
             graph.EventAdd += AddPlot;
             graph.Plot.MouseMove += Plot_MouseMove;
@@ -45,7 +48,7 @@ namespace LogsGraph
                 AddPlot();
                 return;
             }
-            Graph graph = new Graph();
+            Graph graph = new Graph(WorkSpace.AddPlot());
             graph.EventDell += RemovePlot;
             graph.EventAdd += AddPlot;
             graph.Plot.MouseMove += Plot_MouseMove;
