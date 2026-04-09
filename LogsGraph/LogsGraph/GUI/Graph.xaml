@@ -51,15 +51,15 @@
                     <StackPanel Grid.Column="0">
                         <DockPanel LastChildFill="True">
                             <Label Content="Имя графика" Width="90"/>
-                            <TextBox x:Name="TxtName"/>
+                            <TextBox x:Name="TxtName" TextChanged="TxtName_TextChanged"/>
                         </DockPanel>
                     </StackPanel>
-                    <ListBox Grid.Column="1" ></ListBox>
+                    <ListBox Grid.Column="1"  x:Name="AllGraphs"></ListBox>
                     <StackPanel Grid.Column="2">
-                        <Button Content="Добавить график >>"></Button>
-                        <Button Content="Удалить график"></Button>
+                        <Button x:Name="BtnAddGraph" Content="Добавить график >>" Click="BtnAddGraph_Click"></Button>
+                        <Button x:Name="BtnRemoveGraph" Content="Удалить график" Click="BtnRemoveGraph_Click"></Button>
                     </StackPanel>
-                    <ListBox Grid.Column="3"></ListBox>
+                    <ListBox x:Name="PlotGraphycs" Grid.Column="3" ></ListBox>
                 </Grid>
             </GroupBox>
         </Grid>

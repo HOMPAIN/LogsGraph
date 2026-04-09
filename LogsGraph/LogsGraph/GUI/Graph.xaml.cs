@@ -43,6 +43,8 @@ namespace LogsGraph
 
             //заполнение полей настроек
             TxtName.Text = WorkSpacePlot.Name;
+            AllGraphs.ItemsSource = WorkSpace.Graphs;
+            PlotGraphycs.ItemsSource = WorkSpacePlot.Graphycs;
 
             PlotModel = new PlotModel { };
 
@@ -130,6 +132,65 @@ namespace LogsGraph
         private void TxtName_TextChanged(object sender, TextChangedEventArgs e)
         {
             WorkSpacePlot.Name = TxtName.Text;
+        }
+        //добавить график для отображения
+        private void BtnAddGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if(AllGraphs.SelectedItem is GraphData)
+            {
+                WorkSpacePlot.Graphycs.Add(new WorkSpaceGraph((GraphData)AllGraphs.SelectedItem));
+                PlotGraphycs.Items.Refresh();
+                UpdatePlot();
+            }
+        }
+        //удалить график с данного отображения
+        private void BtnRemoveGraph_Click(object sender, RoutedEventArgs e)
+        {
+            if (PlotGraphycs.SelectedItem is WorkSpaceGraph)
+            {
+                PlotGraphycs.Items.Remove(PlotGraphycs.SelectedItem);
+                PlotGraphycs.Items.Refresh();
+                UpdatePlot();
+            }
+        }
+        //перестроить графики
+        public void UpdatePlot()
+        {
+            PlotModel = new PlotModel { };
+
+            //убрать отступы графика
+            PlotModel.PlotMargins = new OxyThickness(0, 2, 20, 2);//размер подписи и числа на оси 
+            PlotModel.Padding = new OxyThickness(0, 0, 10, 0);//размер разметки оси
+
+            // Настройка осей (опционально, но улучшает внешний вид)
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom });
+            PlotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Right });
+
+            // Добавляем точки
+            for (int i = 0; i < WorkSpacePlot.Graphycs.Count; i++)
+            {
+
+                // 2. Создаём серию данных
+                var lineSeries = new LineSeries
+            {
+                Title = "Сигнал",
+                Color = OxyColors.Blue,
+                StrokeThickness = 2,
+                MarkerType = MarkerType.None,
+                MarkerSize = 3,
+                MarkerStroke = OxyColors.Blue,
+                MarkerFill = OxyColors.White
+            };
+
+
+                for (int j = 0; j < WorkSpacePlot.Graphycs[i].Graph.Points.Count; j++)
+                {
+                    lineSeries.Points.Add(new DataPoint(WorkSpacePlot.Graphycs[i].Graph.Points[j].X, WorkSpacePlot.Graphycs[i].Graph.Points[j].Y));
+                }
+
+                PlotModel.Series.Add(lineSeries);
+            }
+            Plot.Model = PlotModel;
         }
     }
 }

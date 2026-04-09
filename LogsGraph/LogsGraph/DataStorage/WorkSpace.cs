@@ -7,8 +7,17 @@ namespace LogsGraph.DataStorage
     //настройки отоборажения отдельного графика
     public class WorkSpaceGraph
     {
+        public int Style=0;//0 - лини, 1 - пунктир, 3 - точки, 4 - линия с точкой, 5 - пунктир с точкой
         //точки графика
-        GraphData Graph;
+        public GraphData Graph;
+        public WorkSpaceGraph(GraphData _Graph)
+        {
+            Graph = _Graph;
+        }
+        public override string ToString()
+        {
+            return Graph.ToString();
+        }
     }
     //настройки одной области вывода графиков проекта
     public class WorkSpacePlot
