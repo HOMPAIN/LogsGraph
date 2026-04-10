@@ -2,6 +2,7 @@
 using LogsGraph.DataStorage;
 using OxyPlot;
 using OxyPlot.Axes;
+using OxyPlot.Legends;
 using OxyPlot.Series;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace LogsGraph
 {
@@ -48,6 +50,8 @@ namespace LogsGraph
             AllGraphs.ItemsSource = WorkSpace.Graphs;
             PlotGraphycs.ItemsSource = WorkSpacePlot.Graphycs;
             WorkSpace.GraphsListUpdated += AllGraphs.Items.Refresh;
+            CbLegendPosition.SelectedIndex = WorkSpacePlot.LegendPosition;
+            LegendUpdate();
 
             PlotModel = new PlotModel { };
 
@@ -147,6 +151,7 @@ namespace LogsGraph
         private void TxtName_TextChanged(object sender, TextChangedEventArgs e)
         {
             WorkSpacePlot.Name = TxtName.Text;
+            LegendUpdate();
         }
         //добавить график для отображения
         private void BtnAddGraph_Click(object sender, RoutedEventArgs e)
@@ -266,6 +271,28 @@ namespace LogsGraph
                 WorkSpaceGraph wsg = (WorkSpaceGraph)PlotGraphycs.SelectedItem;
                 wsg.Style = CbLineType.SelectedIndex;
             }
+        }
+        //выбор расположения легенды
+        private void CbLegendPosition_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            WorkSpacePlot.LegendPosition = CbLegendPosition.SelectedIndex;
+            LegendUpdate();
+        }
+        //обновление отрисоки легенды
+        private void LegendUpdate()
+        {
+            switch(WorkSpacePlot.LegendPosition)
+            {
+                case 0:
+                    LegendTop.Height = 18;
+                    LegendBot.Height = 0;
+                    break;
+                case 1:
+                    LegendTop.Height = 0;
+                    LegendBot.Height = 18;
+                    break;
+            }
+            BLName.Content = TLName.Content = WorkSpacePlot.Name;
         }
     }
 }
