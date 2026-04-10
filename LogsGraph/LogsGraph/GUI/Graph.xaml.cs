@@ -188,12 +188,35 @@ namespace LogsGraph
                 {
                     Title = "Сигнал",
                     Color = OxyColor.FromArgb(c.A,c.R,c.G,c.B),
-                    StrokeThickness = 2,
+                    StrokeThickness = 1,
                     MarkerType = MarkerType.None,
-                    MarkerSize = 3,
+                    MarkerSize = 2,
                     MarkerStroke = OxyColors.Blue,
                     MarkerFill = OxyColors.White
                 };
+                switch(WorkSpacePlot.Graphycs[i].Style)
+                {
+                    case 0:
+                        lineSeries.LineStyle = LineStyle.Solid;
+                        lineSeries.MarkerType = MarkerType.None;
+                        break;
+                    case 1:
+                        lineSeries.LineStyle = LineStyle.Dot;
+                        lineSeries.MarkerType = MarkerType.None;
+                        break;
+                    case 2:
+                        lineSeries.LineStyle = LineStyle.None;
+                        lineSeries.MarkerType = MarkerType.Circle;
+                        break;
+                    case 3:
+                        lineSeries.LineStyle = LineStyle.Solid;
+                        lineSeries.MarkerType = MarkerType.Circle;
+                        break;
+                    case 4:
+                        lineSeries.LineStyle = LineStyle.Dot;
+                        lineSeries.MarkerType = MarkerType.Circle;
+                        break;
+                }
 
 
                 for (int j = 0; j < WorkSpacePlot.Graphycs[i].Graph.Points.Count; j++)
