@@ -365,5 +365,21 @@ namespace LogsGraph
             Prev2Plot.ActualController.UnbindMouseWheel();
             Prev2Plot.ActualController.UnbindMouseDown(OxyMouseButton.Right);
         }
+        //показать подсказку
+        private void ShowHelp_Click(object sender, RoutedEventArgs e)
+        {
+            LHelp1.Visibility = Visibility.Visible;
+            LHelp2.Visibility = Visibility.Visible;
+            LHelp3.Visibility = Visibility.Visible;
+            LHelp4.Visibility = Visibility.Visible;
+        }
+        //спрятать подсказку
+        private void HideHelp(object sender, MouseButtonEventArgs e)
+        {
+            LHelp1.Visibility = Visibility.Hidden;
+            LHelp2.Visibility = Visibility.Hidden;
+            LHelp3.Visibility = Visibility.Hidden;
+            LHelp4.Visibility = Visibility.Hidden;
+        }
     }
 }

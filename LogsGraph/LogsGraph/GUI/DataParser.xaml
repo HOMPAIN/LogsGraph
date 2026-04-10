@@ -21,12 +21,20 @@
             <!-- строка с адресом файоа -->
             <Grid Grid.Row="0" Margin="2">
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="90" />
                     <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="70" />
+                    <ColumnDefinition Width="90" />
                 </Grid.ColumnDefinitions>
-                <TextBox Grid.Column="0" x:Name="FilePath" TextWrapping="Wrap" Text="File Path"/>
-                <Button Grid.Column="1" x:Name="FileSelect" Content="File Select" Click="FileSelect_Click"/>
+                <Button x:Name="ShowHelp" Background="#f7a48f"  Margin="0,0,10,0" Click="ShowHelp_Click">Подсказка ?</Button>
+                <TextBox Grid.Column="1" x:Name="FilePath" TextWrapping="Wrap" Text="File Path"/>
+                <Button Grid.Column="2" x:Name="FileSelect" Content="Выбрать файл" Click="FileSelect_Click"/>
             </Grid>
+            <!-- Подсказка -->
+            <Label x:Name="LHelp1"  Background="#D060f7dc" Visibility="Hidden" MouseLeftButtonUp="HideHelp" >
+                <TextBlock FontSize="15" TextWrapping="Wrap">
+                    1. Выбрать файл с данными
+                </TextBlock>
+            </Label>
             <!-- профиль загрузки -->
             <GroupBox Grid.Row="1" Header="Профили загрузки файлов">
                 <Grid>
@@ -102,6 +110,12 @@
                     </Grid>
                 </Grid>
             </GroupBox>
+            <!-- Подсказка -->
+            <Label x:Name="LHelp2" Grid.Row="1"  Background="#D0c3f760" Visibility="Hidden" MouseLeftButtonUp="HideHelp">
+                <TextBlock FontSize="15" TextWrapping="Wrap">
+                    2. Описать структуру файла с данными для правильной загрузки и парсинга файла
+                </TextBlock>
+            </Label>
             <!-- предварительный просмотр -->
             <GroupBox Grid.Row="2" Header="Предварительный просмотр">
                 <Grid>
@@ -122,6 +136,12 @@
                     </Grid>
                 </Grid>
             </GroupBox>
+            <!-- Подсказка -->
+            <Label x:Name="LHelp3" Grid.Row="2"  Background="#D0f7be60" Visibility="Hidden"  MouseLeftButtonUp="HideHelp">
+                <TextBlock FontSize="15" TextWrapping="Wrap">
+                    3. Убедиться в том, что данные загружены правильно и выбрать нужные графики
+                </TextBlock>
+            </Label>
         </Grid>
 
         <!-- Список загруженных графиков -->
@@ -144,5 +164,9 @@
                 </Grid>
             </Grid>
         </GroupBox>
+        <!-- Подсказка -->
+        <Label x:Name="LHelp4" Grid.Column="1"  Background="#D0c96d6d" MouseLeftButtonUp="HideHelp" Visibility="Hidden">
+            <TextBlock FontSize="15" TextWrapping="Wrap">4. Добавить нужные графики в текущий проект</TextBlock>
+        </Label>
     </Grid>
 </UserControl>
