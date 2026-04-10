@@ -35,11 +35,13 @@
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+            <!-- график -->
             <oxy:PlotView Grid.Row="0" x:Name="Plot" Background="#FFDAC646" BorderThickness="1" BorderBrush="Black"/>
             <!-- легенда -->
             <StackPanel Grid.Row="1" Orientation="Horizontal" >
                 <Label Content="Namessadasd" Padding="0" Background="White"></Label>
             </StackPanel>
+            <!-- окно настройки -->
             <GroupBox Grid.Row="0" x:Name="Settings" Grid.Column="1" Background="Beige" Header="Настройка графиков" Visibility="Visible">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -48,18 +50,43 @@
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
+                    <!-- настройки области графика -->
                     <StackPanel Grid.Column="0">
                         <DockPanel LastChildFill="True">
                             <Label Content="Имя графика" Width="90"/>
                             <TextBox x:Name="TxtName" TextChanged="TxtName_TextChanged"/>
                         </DockPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5" >
+                            <Label Content="Легенда"  Width="90"/>
+                            <ComboBox x:Name="CbLegendPosition" SelectedIndex="0">
+                                <ComboBoxItem Content="Снизу" Tag="Bottom"/>
+                                <ComboBoxItem Content="Сверху" Tag="Top"/>
+                            </ComboBox>
+                        </StackPanel>
                     </StackPanel>
+                    <!-- список всех графиков -->
                     <ListBox Grid.Column="1"  x:Name="AllGraphs"></ListBox>
+                    <!-- настройки отдельного графика -->
                     <StackPanel Grid.Column="2">
                         <Button x:Name="BtnAddGraph" Content="Добавить график >>" Click="BtnAddGraph_Click"></Button>
                         <Button x:Name="BtnRemoveGraph" Content="Удалить график" Click="BtnRemoveGraph_Click"></Button>
+                        <DockPanel LastChildFill="True">
+                            <Label Content="Цвет графика" Width="90"/>
+                            <TextBox x:Name="TxtColor" TextChanged="TxtColor_TextChanged" />
+                        </DockPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5" >
+                            <Label Content="Тип графика"  Width="90"/>
+                            <ComboBox x:Name="CbLineType" SelectionChanged="CbLineType_SelectionChanged">
+                                <ComboBoxItem Content="Линия" />
+                                <ComboBoxItem Content="Пунктир"/>
+                                <ComboBoxItem Content="Точка"/>
+                                <ComboBoxItem Content="Линия с точкой" />
+                                <ComboBoxItem Content="Пунктир с точкой"/>
+                            </ComboBox>
+                        </StackPanel>
                     </StackPanel>
-                    <ListBox x:Name="PlotGraphycs" Grid.Column="3" ></ListBox>
+                    <!-- список графиков в данной области графиков -->
+                    <ListBox x:Name="PlotGraphycs" Grid.Column="3" SelectionChanged="PlotGraphycs_SelectionChanged"  ></ListBox>
                 </Grid>
             </GroupBox>
         </Grid>

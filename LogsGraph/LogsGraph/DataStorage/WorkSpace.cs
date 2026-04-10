@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Media;
 
 namespace LogsGraph.DataStorage
 {
     //настройки отоборажения отдельного графика
     public class WorkSpaceGraph
     {
+        public Color Color = Colors.Blue;//цвет графика
         public int Style=0;//0 - лини, 1 - пунктир, 3 - точки, 4 - линия с точкой, 5 - пунктир с точкой
         //точки графика
         public GraphData Graph;
@@ -24,6 +26,10 @@ namespace LogsGraph.DataStorage
     {
         //имя для области вывода
         public string Name;
+        //позиция легенды на графике
+        public int LegendPosition = 0;// 0 - снизу, 1 сверху,...дописать варианты
+        //высота окна
+        public double Height = 300;
         //список графиков в этой области
         public List<WorkSpaceGraph> Graphycs=new List<WorkSpaceGraph>();
 
@@ -40,9 +46,12 @@ namespace LogsGraph.DataStorage
         //список областей отображения
         public List<WorkSpacePlot> Plots =new List<WorkSpacePlot>();
 
+        public event Action? GraphsListUpdated;
+
         public void Add(GraphData _Graph)
         {
             Graphs.Add(_Graph);
+            GraphsListUpdated?.Invoke();
         }
         //добавить окно графиков
         public WorkSpacePlot AddPlot(int _Index=-1)

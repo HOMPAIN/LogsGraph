@@ -12,8 +12,10 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -45,6 +47,7 @@ namespace LogsGraph
             TxtName.Text = WorkSpacePlot.Name;
             AllGraphs.ItemsSource = WorkSpace.Graphs;
             PlotGraphycs.ItemsSource = WorkSpacePlot.Graphycs;
+            WorkSpace.GraphsListUpdated += AllGraphs.Items.Refresh;
 
             PlotModel = new PlotModel { };
 
@@ -101,24 +104,36 @@ namespace LogsGraph
         private void ClickSizeAdd(object sender, RoutedEventArgs e)
         {
             Height *= 1.1;
+            WorkSpacePlot.Height = Height;
         }
         //кнопка уменьшения размера
         private void ClickSizeSub(object sender, RoutedEventArgs e)
         {
             Height *= 0.9;
             if (Height < 80) Height = 80;
+            WorkSpacePlot.Height = Height;
         }
         //кнопка выбор графиков
         private void ClickGraphSettings(object sender, RoutedEventArgs e)
         {
             if (Settings.Visibility == Visibility.Visible)
+            {
+                Height = HideHeight;
                 Settings.Visibility = Visibility.Hidden;
+                UpdatePlot();
+            }
             else
+            {
+                HideHeight = Height;
                 Settings.Visibility = Visibility.Visible;
+                if(Height<150)
+                    Height = 150;
+            }
         }
         //кнопка удалить график
         private void ClickDell(object sender, RoutedEventArgs e)
         {
+            WorkSpace.GraphsListUpdated -= AllGraphs.Items.Refresh;
             if (EventDell != null)
                 EventDell(this, EventArgs.Empty);
         }
@@ -140,7 +155,6 @@ namespace LogsGraph
             {
                 WorkSpacePlot.Graphycs.Add(new WorkSpaceGraph((GraphData)AllGraphs.SelectedItem));
                 PlotGraphycs.Items.Refresh();
-                UpdatePlot();
             }
         }
         //удалить график с данного отображения
@@ -150,7 +164,6 @@ namespace LogsGraph
             {
                 PlotGraphycs.Items.Remove(PlotGraphycs.SelectedItem);
                 PlotGraphycs.Items.Refresh();
-                UpdatePlot();
             }
         }
         //перестроить графики
@@ -169,18 +182,18 @@ namespace LogsGraph
             // Добавляем точки
             for (int i = 0; i < WorkSpacePlot.Graphycs.Count; i++)
             {
-
+                Color c = WorkSpacePlot.Graphycs[i].Color;
                 // 2. Создаём серию данных
                 var lineSeries = new LineSeries
-            {
-                Title = "Сигнал",
-                Color = OxyColors.Blue,
-                StrokeThickness = 2,
-                MarkerType = MarkerType.None,
-                MarkerSize = 3,
-                MarkerStroke = OxyColors.Blue,
-                MarkerFill = OxyColors.White
-            };
+                {
+                    Title = "Сигнал",
+                    Color = OxyColor.FromArgb(c.A,c.R,c.G,c.B),
+                    StrokeThickness = 2,
+                    MarkerType = MarkerType.None,
+                    MarkerSize = 3,
+                    MarkerStroke = OxyColors.Blue,
+                    MarkerFill = OxyColors.White
+                };
 
 
                 for (int j = 0; j < WorkSpacePlot.Graphycs[i].Graph.Points.Count; j++)
@@ -191,6 +204,45 @@ namespace LogsGraph
                 PlotModel.Series.Add(lineSeries);
             }
             Plot.Model = PlotModel;
+        }
+        //выбор графика из списка графиков этого окна
+        private void PlotGraphycs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateGraphSettings();
+        }
+        //вывести настройки текущего графика в окно настроек
+        private void UpdateGraphSettings()
+        {
+            if (PlotGraphycs.SelectedItem is WorkSpaceGraph)
+            {
+                WorkSpaceGraph wsg = (WorkSpaceGraph)PlotGraphycs.SelectedItem;
+                TxtColor.Text = wsg.Color.ToString();
+                //TxtColor.Background = new SolidColorBrush(wsg.Color);
+                CbLineType.SelectedIndex = wsg.Style;
+            }
+        }
+        //выбор цвета линии графика
+        private void TxtColor_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (PlotGraphycs.SelectedItem is WorkSpaceGraph)
+            {
+                WorkSpaceGraph wsg = (WorkSpaceGraph)PlotGraphycs.SelectedItem;
+                try
+                {
+                    wsg.Color = (Color)ColorConverter.ConvertFromString(TxtColor.Text);
+                    //TxtColor.Background = new SolidColorBrush(wsg.Color);
+                }
+                catch { }
+            }
+        }
+        //выбор типа линии графика
+        private void CbLineType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PlotGraphycs.SelectedItem is WorkSpaceGraph)
+            {
+                WorkSpaceGraph wsg = (WorkSpaceGraph)PlotGraphycs.SelectedItem;
+                wsg.Style = CbLineType.SelectedIndex;
+            }
         }
     }
 }
