@@ -97,7 +97,7 @@ namespace LogsGraph
                 double min = plot.Model.Axes[0].ActualMinimum;
                 double max = plot.Model.Axes[0].ActualMaximum;
 
-                double k = (max-min)/ plot.Width;
+                double k = (max-min)/ plot.ActualWidth;
 
                 min -= (p.X - old_pos.X) * k;
                 max -= (p.X - old_pos.X) * k;
