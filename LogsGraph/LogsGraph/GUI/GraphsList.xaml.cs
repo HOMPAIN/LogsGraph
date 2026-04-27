@@ -84,7 +84,7 @@ namespace LogsGraph
                 plot.Model.InvalidatePlot(false);
             }
         }
-        //обработка движения мыши с нажатой правой кнопкой
+        //обработка движения мыши с нажатой правой кнопкой (перемещение графика)
         Point old_pos;
         private void Plot_MouseMove(object sender, MouseEventArgs e)
         {
@@ -97,8 +97,10 @@ namespace LogsGraph
                 double min = plot.Model.Axes[0].ActualMinimum;
                 double max = plot.Model.Axes[0].ActualMaximum;
 
-                min -= (p.X - old_pos.X) * 0.03;
-                max -= (p.X - old_pos.X) * 0.03;
+                double k = (max-min)/ plot.Width;
+
+                min -= (p.X - old_pos.X) * k;
+                max -= (p.X - old_pos.X) * k;
 
                 foreach (var graph in PlotsContainer.Children)
                 {
