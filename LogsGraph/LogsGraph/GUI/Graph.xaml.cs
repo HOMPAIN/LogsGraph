@@ -117,7 +117,7 @@ namespace LogsGraph
             if (Height < 80) Height = 80;
             WorkSpacePlot.Height = Height;
         }
-        //кнопка выбор графиков
+        //кнопка выбор графиков и настроек
         private void ClickGraphSettings(object sender, RoutedEventArgs e)
         {
             if (Settings.Visibility == Visibility.Visible)
@@ -125,6 +125,7 @@ namespace LogsGraph
                 Height = HideHeight;
                 Settings.Visibility = Visibility.Hidden;
                 UpdatePlot();
+                LegendUpdate();
             }
             else
             {
@@ -141,7 +142,7 @@ namespace LogsGraph
             if (EventDell != null)
                 EventDell(this, EventArgs.Empty);
         }
-        //кнопка добавить график
+        //кнопка добавить график снизу
         private void ClickAdd(object sender, RoutedEventArgs e)
         {
             if (EventAdd != null)
@@ -284,15 +285,34 @@ namespace LogsGraph
             switch(WorkSpacePlot.LegendPosition)
             {
                 case 0:
-                    LegendTop.Height = 18;
-                    LegendBot.Height = 0;
-                    break;
-                case 1:
                     LegendTop.Height = 0;
                     LegendBot.Height = 18;
                     break;
+                case 1:
+                    LegendTop.Height = 18;
+                    LegendBot.Height = 0;
+                    break;
             }
             BLName.Content = TLName.Content = WorkSpacePlot.Name;
+            //заполнение легенды
+            while (LegendTop.Children.Count > 1) LegendTop.Children.RemoveAt(LegendTop.Children.Count - 1);
+            while (LegendBot.Children.Count > 1) LegendBot.Children.RemoveAt(LegendBot.Children.Count - 1);
+            for (int i = 0; i < WorkSpacePlot.Graphycs.Count; i++)
+            {
+                LegendTop.Children.Add(new Label());
+                SetLegendLable(LegendTop.Children[i + 1] as Label, WorkSpacePlot.Graphycs[i]);
+                LegendBot.Children.Add(new Label());
+                SetLegendLable(LegendBot.Children[i + 1] as Label, WorkSpacePlot.Graphycs[i]);
+            }
+        }
+        //применение стиля графика к лэйблу легенды
+        private static void SetLegendLable(Label? _Lable, WorkSpaceGraph _Graph)
+        {
+            if (_Lable == null) return;
+
+            _Lable.Padding = new Thickness(1,0,1,0);
+            _Lable.Content = _Graph.Graph.Name;
+            _Lable.Foreground = new SolidColorBrush(_Graph.Color);
         }
     }
 }
