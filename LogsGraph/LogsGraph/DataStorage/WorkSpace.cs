@@ -2,16 +2,18 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Media;
+using System.Text.Json.Serialization;
 
 namespace LogsGraph.DataStorage
 {
     //настройки отоборажения отдельного графика
     public class WorkSpaceGraph
     {
-        public Color Color = Colors.Blue;//цвет графика
-        public int Style=0;//0 - лини, 1 - пунктир, 3 - точки, 4 - линия с точкой, 5 - пунктир с точкой
-        //точки графика
-        public GraphData Graph;
+        public Color Color { get; set; } = Colors.Blue;//цвет графика
+        public int Style { get; set; } = 0;//0 - лини, 1 - пунктир, 3 - точки, 4 - линия с точкой, 5 - пунктир с точкой
+        
+        [JsonIgnore]
+        public GraphData Graph;//точки графика, это ссылка, сами графики хранятся в WorkSpace, нужно потом переделать на id или имя
         public WorkSpaceGraph(GraphData _Graph)
         {
             Graph = _Graph;
@@ -25,13 +27,13 @@ namespace LogsGraph.DataStorage
     public class WorkSpacePlot
     {
         //имя для области вывода
-        public string Name;
+        public string Name { get; set; }="Plot";
         //позиция легенды на графике
-        public int LegendPosition = 0;// 0 - снизу, 1 сверху,...дописать варианты
+        public int LegendPosition { get; set; } = 0;// 0 - снизу, 1 сверху,...дописать варианты
         //высота окна
-        public double Height = 300;
+        public double Height { get; set; } = 300;
         //список графиков в этой области
-        public List<WorkSpaceGraph> Graphycs=new List<WorkSpaceGraph>();
+        public List<WorkSpaceGraph> Graphycs { get; set; } = new List<WorkSpaceGraph>();
 
         public WorkSpacePlot(string _Name)
         {
@@ -39,13 +41,14 @@ namespace LogsGraph.DataStorage
         }
     }
     //текущий проект графиков
-    public class WorkSpace
+    public class WorkSpace: ConfigBase<WorkSpace>
     {
         //все графики в текущем проекте
-        public List<GraphData> Graphs=new List<GraphData>();
+        public List<GraphData> Graphs { get; set; } = new List<GraphData>();
         //список областей отображения
-        public List<WorkSpacePlot> Plots =new List<WorkSpacePlot>();
+        public List<WorkSpacePlot> Plots { get; set; } = new List<WorkSpacePlot>();
 
+        //событие изменения списка графиков
         public event Action? GraphsListUpdated;
 
         public void Add(GraphData _Graph)

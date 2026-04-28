@@ -8,6 +8,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="570" Width="800">
     <Grid>
+
+        <!-- Вкладки -->
         <TabControl>
             <TabItem Header="Импорт данных">
                 <Grid Background="#FFE5E5E5">
@@ -21,7 +23,9 @@
                 </Grid>
             </TabItem>
         </TabControl>
-        <Button Content="Загрузить проект" Width="120" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,130,0"></Button>
-        <Button Content="Сохранить проект" Width="120" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,5,0"></Button>
+        <!-- Кнопки сохранения и загрузки проекта -->
+        <Label x:Name="LabProjPath" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,270,0" Padding="2" >Путь к файлу проекта</Label>
+        <Button x:Name="BtnProjLoad" Content="Загрузить проект" Width="120" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,130,0" Click="BtnProjLoad_Click"></Button>
+        <Button x:Name="BtnProjSave" Content="Сохранить проект" Width="120" Height="20" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,2,5,0" Click="BtnProjSave_Click"></Button>
     </Grid>
 </Window>

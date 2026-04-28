@@ -9,8 +9,8 @@ namespace LogsGraph.DataStorage
     //точка графика
     public struct GraphPoint
     {
-        public long X; 
-        public double Y;
+        public long X { get; set; }=0; 
+        public double Y { get; set; }=0;
 
         public GraphPoint(long _X, double _Y)
         {
@@ -21,8 +21,8 @@ namespace LogsGraph.DataStorage
     //один график
     public class GraphData
     {
-        public string Name;//имя графика
-        public List<GraphPoint> Points= new List<GraphPoint>();//точки графика
+        public string Name { get; set; }="";//имя графика
+        public List<GraphPoint> Points { get; set; } = new List<GraphPoint>();//точки графика
 
         public override string ToString()
         {
