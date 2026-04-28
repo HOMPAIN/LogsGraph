@@ -3,6 +3,7 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -284,12 +285,11 @@ namespace LogsGraph.DataStorage
     {
         public override GraphData Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            // Ожидаем, что нам придет объект с полями Name и Data (Base64)
             if (reader.TokenType != JsonTokenType.StartObject)
                 throw new JsonException();
 
             string name = null;
-            byte[] dataBytes = null;
+            byte[] compressedBytes = null;
 
             while (reader.Read())
             {
@@ -305,10 +305,10 @@ namespace LogsGraph.DataStorage
                         case "Name":
                             name = reader.GetString();
                             break;
-                        case "PointsBase64": // Имя поля, в котором лежит Base64
+                        case "PointsGzBase64": // Новое имя поля, чтобы отличать от старого формата
                             string base64 = reader.GetString();
                             if (!string.IsNullOrEmpty(base64))
-                                dataBytes = Convert.FromBase64String(base64);
+                                compressedBytes = Convert.FromBase64String(base64);
                             break;
                     }
                 }
@@ -316,23 +316,39 @@ namespace LogsGraph.DataStorage
 
             var graph = new GraphData { Name = name ?? "" };
 
-            if (dataBytes != null && dataBytes.Length > 0)
+            if (compressedBytes != null && compressedBytes.Length > 0)
             {
-                // Декодируем байты обратно в точки
-                // Структура GraphPoint: long (8 байт) + double (8 байт) = 16 байт
-                int pointSize = 16;
-                if (dataBytes.Length % pointSize == 0)
+                try
                 {
-                    int count = dataBytes.Length / pointSize;
-                    graph.Points = new List<GraphPoint>(count);
+                    // 1. Распаковываем Gzip
+                    using var memoryStream = new MemoryStream(compressedBytes);
+                    using var gzipStream = new GZipStream(memoryStream, CompressionMode.Decompress);
+                    using var decompressedMemoryStream = new MemoryStream();
 
-                    for (int i = 0; i < count; i++)
+                    gzipStream.CopyTo(decompressedMemoryStream);
+                    byte[] dataBytes = decompressedMemoryStream.ToArray();
+
+                    // 2. Декодируем байты обратно в точки
+                    int pointSize = 16; // long (8) + double (8)
+                    if (dataBytes.Length > 0 && dataBytes.Length % pointSize == 0)
                     {
-                        int offset = i * pointSize;
-                        long x = BinaryPrimitives.ReadInt64LittleEndian(dataBytes.AsSpan(offset));
-                        double y = BinaryPrimitives.ReadDoubleLittleEndian(dataBytes.AsSpan(offset + 8));
-                        graph.Points.Add(new GraphPoint(x, y));
+                        int count = dataBytes.Length / pointSize;
+                        graph.Points = new List<GraphPoint>(count);
+
+                        for (int i = 0; i < count; i++)
+                        {
+                            int offset = i * pointSize;
+                            long x = BinaryPrimitives.ReadInt64LittleEndian(dataBytes.AsSpan(offset));
+                            double y = BinaryPrimitives.ReadDoubleLittleEndian(dataBytes.AsSpan(offset + 8));
+                            graph.Points.Add(new GraphPoint(x, y));
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+                    // Если распаковка не удалась (например, битый файл), оставляем пустой список
+                    // Можно добавить логирование: Console.WriteLine($"Error decompressing graph data: {ex.Message}");
+                    graph.Points = new List<GraphPoint>();
                 }
             }
             else
@@ -350,26 +366,37 @@ namespace LogsGraph.DataStorage
             // Сохраняем имя обычно
             writer.WriteString("Name", value.Name);
 
-            // Конвертируем точки в бинарный вид
             if (value.Points != null && value.Points.Count > 0)
             {
-                int pointSize = 16; // 8 байт long + 8 байт double
-                byte[] buffer = new byte[value.Points.Count * pointSize];
+                // 1. Конвертируем точки в бинарный вид (сырые байты)
+                int pointSize = 16;
+                byte[] rawBuffer = new byte[value.Points.Count * pointSize];
 
                 for (int i = 0; i < value.Points.Count; i++)
                 {
                     int offset = i * pointSize;
-                    BinaryPrimitives.WriteInt64LittleEndian(buffer.AsSpan(offset), value.Points[i].X);
-                    BinaryPrimitives.WriteDoubleLittleEndian(buffer.AsSpan(offset + 8), value.Points[i].Y);
+                    BinaryPrimitives.WriteInt64LittleEndian(rawBuffer.AsSpan(offset), value.Points[i].X);
+                    BinaryPrimitives.WriteDoubleLittleEndian(rawBuffer.AsSpan(offset + 8), value.Points[i].Y);
                 }
 
-                // Кодируем в Base64 и пишем в JSON
-                string base64 = Convert.ToBase64String(buffer);
-                writer.WriteString("PointsBase64", base64);
+                // 2. Сжимаем Gzip-ом
+                byte[] compressedBytes;
+                using (var memoryStream = new MemoryStream())
+                {
+                    using (var gzipStream = new GZipStream(memoryStream, CompressionLevel.Optimal)) // Optimal дает лучшее сжатие
+                    {
+                        gzipStream.Write(rawBuffer, 0, rawBuffer.Length);
+                    }
+                    compressedBytes = memoryStream.ToArray();
+                }
+
+                // 3. Кодируем в Base64 и пишем в JSON
+                string base64 = Convert.ToBase64String(compressedBytes);
+                writer.WriteString("PointsGzBase64", base64);
             }
             else
             {
-                writer.WriteString("PointsBase64", "");
+                writer.WriteString("PointsGzBase64", "");
             }
 
             writer.WriteEndObject();
