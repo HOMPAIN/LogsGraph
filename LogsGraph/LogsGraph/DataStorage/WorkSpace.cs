@@ -14,6 +14,10 @@ namespace LogsGraph.DataStorage
         
         [JsonIgnore]
         public GraphData Graph;//точки графика, это ссылка, сами графики хранятся в WorkSpace, нужно потом переделать на id или имя
+        public WorkSpaceGraph()
+        {
+
+        }
         public WorkSpaceGraph(GraphData _Graph)
         {
             Graph = _Graph;
@@ -35,6 +39,11 @@ namespace LogsGraph.DataStorage
         //список графиков в этой области
         public List<WorkSpaceGraph> Graphycs { get; set; } = new List<WorkSpaceGraph>();
 
+        public WorkSpacePlot()
+        {
+
+        }
+
         public WorkSpacePlot(string _Name)
         {
             Name = _Name;
@@ -50,6 +59,11 @@ namespace LogsGraph.DataStorage
 
         //событие изменения списка графиков
         public event Action? GraphsListUpdated;
+
+        public WorkSpace()
+        {
+
+        }
 
         public void Add(GraphData _Graph)
         {

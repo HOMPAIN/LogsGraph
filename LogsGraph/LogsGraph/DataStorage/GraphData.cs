@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace LogsGraph.DataStorage
 {
@@ -12,6 +15,11 @@ namespace LogsGraph.DataStorage
         public long X { get; set; }=0; 
         public double Y { get; set; }=0;
 
+        public GraphPoint()
+        {
+            X = 0;
+            Y = 0;
+        }
         public GraphPoint(long _X, double _Y)
         {
             X = _X;
@@ -19,6 +27,7 @@ namespace LogsGraph.DataStorage
         }
     }
     //один график
+    [JsonConverter(typeof(GraphDataBinaryConverter))]
     public class GraphData
     {
         public string Name { get; set; }="";//имя графика
@@ -266,6 +275,104 @@ namespace LogsGraph.DataStorage
             //resultGraphs.RemoveAll(g => g.Points.Count == 0);
 
             return resultGraphs;
+        }
+    }
+
+    //---------------------------------------------------------------------------------
+    // json Конвертер для класса GraphData
+    public class GraphDataBinaryConverter : JsonConverter<GraphData>
+    {
+        public override GraphData Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            // Ожидаем, что нам придет объект с полями Name и Data (Base64)
+            if (reader.TokenType != JsonTokenType.StartObject)
+                throw new JsonException();
+
+            string name = null;
+            byte[] dataBytes = null;
+
+            while (reader.Read())
+            {
+                if (reader.TokenType == JsonTokenType.EndObject) break;
+
+                if (reader.TokenType == JsonTokenType.PropertyName)
+                {
+                    string propertyName = reader.GetString();
+                    reader.Read(); // Читаем значение
+
+                    switch (propertyName)
+                    {
+                        case "Name":
+                            name = reader.GetString();
+                            break;
+                        case "PointsBase64": // Имя поля, в котором лежит Base64
+                            string base64 = reader.GetString();
+                            if (!string.IsNullOrEmpty(base64))
+                                dataBytes = Convert.FromBase64String(base64);
+                            break;
+                    }
+                }
+            }
+
+            var graph = new GraphData { Name = name ?? "" };
+
+            if (dataBytes != null && dataBytes.Length > 0)
+            {
+                // Декодируем байты обратно в точки
+                // Структура GraphPoint: long (8 байт) + double (8 байт) = 16 байт
+                int pointSize = 16;
+                if (dataBytes.Length % pointSize == 0)
+                {
+                    int count = dataBytes.Length / pointSize;
+                    graph.Points = new List<GraphPoint>(count);
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        int offset = i * pointSize;
+                        long x = BinaryPrimitives.ReadInt64LittleEndian(dataBytes.AsSpan(offset));
+                        double y = BinaryPrimitives.ReadDoubleLittleEndian(dataBytes.AsSpan(offset + 8));
+                        graph.Points.Add(new GraphPoint(x, y));
+                    }
+                }
+            }
+            else
+            {
+                graph.Points = new List<GraphPoint>();
+            }
+
+            return graph;
+        }
+
+        public override void Write(Utf8JsonWriter writer, GraphData value, JsonSerializerOptions options)
+        {
+            writer.WriteStartObject();
+
+            // Сохраняем имя обычно
+            writer.WriteString("Name", value.Name);
+
+            // Конвертируем точки в бинарный вид
+            if (value.Points != null && value.Points.Count > 0)
+            {
+                int pointSize = 16; // 8 байт long + 8 байт double
+                byte[] buffer = new byte[value.Points.Count * pointSize];
+
+                for (int i = 0; i < value.Points.Count; i++)
+                {
+                    int offset = i * pointSize;
+                    BinaryPrimitives.WriteInt64LittleEndian(buffer.AsSpan(offset), value.Points[i].X);
+                    BinaryPrimitives.WriteDoubleLittleEndian(buffer.AsSpan(offset + 8), value.Points[i].Y);
+                }
+
+                // Кодируем в Base64 и пишем в JSON
+                string base64 = Convert.ToBase64String(buffer);
+                writer.WriteString("PointsBase64", base64);
+            }
+            else
+            {
+                writer.WriteString("PointsBase64", "");
+            }
+
+            writer.WriteEndObject();
         }
     }
 }
