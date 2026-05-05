@@ -6,9 +6,10 @@
              xmlns:local="clr-namespace:LogsGraph"
              xmlns:oxy="http://oxyplot.org/wpf" x:Class="LogsGraph.Graph"
              mc:Ignorable="d" Height="148"
-            d:DesignWidth="800">
+            d:DesignWidth="800"
+    d:Background="WhiteSmoke">
     <Border BorderThickness="1" BorderBrush="Black">
-        <Grid Background="MediumSeaGreen">
+        <Grid >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="50" />
                 <ColumnDefinition Width="*" />
@@ -20,12 +21,30 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <UniformGrid Grid.Column="0" Rows="6" Columns="1" HorizontalAlignment="Left" Margin="5">
-                    <Button Content="^" Click="ClickHide" />
-                    <Button Content="Size +" Click="ClickSizeAdd"/>
-                    <Button Content="Size -" Click="ClickSizeSub"/>
-                    <Button Content="Graphycs" Click="ClickGraphSettings"/>
-                    <Button Content="Del" Click="ClickDell"/>
-                    <Button Content="Add" Click="ClickAdd"/>
+                    <!-- Кнопка свернуть -->
+                    <Button Click="ClickHide" Width="40" >
+                        <Path Width="12" Fill="Black" Stretch="Uniform"  Data="m280-400 200-200.67L680-400H280Z" />
+                    </Button>
+                    <!-- Кнопка увеличить -->
+                    <Button Click="ClickSizeAdd">
+                        <Path Fill="Black" Stretch="Uniform" Data="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Zm-40-60v-80h-80v-80h80v-80h80v80h80v80h-80v80h-80Z" />
+                    </Button>
+                    <!-- Кнопка уменьшить -->
+                    <Button Click="ClickSizeSub">
+                        <Path Fill="Black" Stretch="Uniform" Data="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400ZM280-540v-80h200v80H280Z" />
+                    </Button>
+                    <!-- Кнопка настроек -->
+                    <Button Click="ClickGraphSettings">
+                        <Path Fill="Black" Stretch="Uniform" Data="m382-80-18.67-126.67q-17-6.33-34.83-16.66-17.83-10.34-32.17-21.67L178-192.33 79.33-365l106.34-78.67q-1.67-8.33-2-18.16-.34-9.84-.34-18.17 0-8.33.34-18.17.33-9.83 2-18.16L79.33-595 178-767.67 296.33-715q14.34-11.33 32.34-21.67 18-10.33 34.66-16L382-880h196l18.67 126.67q17 6.33 35.16 16.33 18.17 10 31.84 22L782-767.67 880.67-595l-106.34 77.33q1.67 9 2 18.84.34 9.83.34 18.83 0 9-.34 18.5Q776-452 774-443l106.33 78-98.66 172.67-118-52.67q-14.34 11.33-32 22-17.67 10.67-35 16.33L578-80H382Zm55.33-66.67h85l14-110q32.34-8 60.84-24.5T649-321l103.67 44.33 39.66-70.66L701-415q4.33-16 6.67-32.17Q710-463.33 710-480q0-16.67-2-32.83-2-16.17-7-32.17l91.33-67.67-39.66-70.66L649-638.67q-22.67-25-50.83-41.83-28.17-16.83-61.84-22.83l-13.66-110h-85l-14 110q-33 7.33-61.5 23.83T311-639l-103.67-44.33-39.66 70.66L259-545.33Q254.67-529 252.33-513 250-497 250-480q0 16.67 2.33 32.67 2.34 16 6.67 32.33l-91.33 67.67 39.66 70.66L311-321.33q23.33 23.66 51.83 40.16 28.5 16.5 60.84 24.5l13.66 110Zm43.34-200q55.33 0 94.33-39T614-480q0-55.33-39-94.33t-94.33-39q-55.67 0-94.5 39-38.84 39-38.84 94.33t38.84 94.33q38.83 39 94.5 39ZM480-480Z" />
+                    </Button>
+                    <!-- Кнопка удалить -->
+                    <Button Click="ClickDell">
+                        <Path Fill="Black" Stretch="Uniform" Data="m366-299.33 114-115.34 114.67 115.34 50-50.67-114-115.33 114-115.34-50-50.66L480-516 366-631.33l-50.67 50.66L430-465.33 315.33-350 366-299.33ZM267.33-120q-27 0-46.83-19.83-19.83-19.84-19.83-46.84V-740H160v-66.67h192V-840h256v33.33h192V-740h-40.67v553.33q0 27-19.83 46.84Q719.67-120 692.67-120H267.33Zm425.34-620H267.33v553.33h425.34V-740Zm-425.34 0v553.33V-740Z" />
+                    </Button>
+                    <!-- Кнопка добавить -->
+                    <Button Click="ClickAdd">
+                        <Path Fill="Black" Stretch="Uniform" Data="M186.67-186.67v-178.66V-342v-4.67 160Zm0 66.67q-27 0-46.84-19.83Q120-159.67 120-186.67v-178.66q0-27 19.83-46.84Q159.67-432 186.67-432h586.66q27 0 46.84 19.83Q840-392.33 840-365.33H186.67v178.66h426.66V-120H186.67Zm0-408.67q-27 0-46.84-19.83Q120-568.33 120-595.33v-178q0-27 19.83-46.84Q159.67-840 186.67-840h586.66q27 0 46.84 19.83Q840-800.33 840-773.33v178q0 27-19.83 46.83-19.84 19.83-46.84 19.83H186.67Zm0-66.66h586.66v-178H186.67v178Zm0 0v-178 178ZM773.33-40v-80h-80v-66.67h80v-80H840v80h80V-120h-80v80h-66.67Z" />
+                    </Button>
                 </UniformGrid>
                 <Button x:Name="BHide" Visibility="Hidden" Content="Show" HorizontalAlignment="Left" Click="ClickShow"/>
             </Grid>
@@ -39,7 +58,7 @@
                 </Grid.RowDefinitions>
 
                 <!-- график -->
-                <oxy:PlotView Grid.Row="1" x:Name="Plot" Background="#FFDAC646" BorderThickness="0" BorderBrush="Black"/>
+                <oxy:PlotView Grid.Row="1" x:Name="Plot" BorderThickness="0" BorderBrush="Black"/>
                 <!-- легенда верхняя -->
                 <StackPanel Grid.Row="0" x:Name="LegendTop"  Orientation="Horizontal" Height="18">
                     <Label x:Name="TLName" Content="Namessadasd" Padding="1,0,1,0" Background="White" FontWeight="Bold"></Label>
@@ -97,7 +116,6 @@
                     </Grid>
                 </GroupBox>
             </Grid>
-
         </Grid>
     </Border>
 </UserControl>

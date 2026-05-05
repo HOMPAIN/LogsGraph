@@ -6,20 +6,24 @@
         xmlns:local="clr-namespace:LogsGraph"
         xmlns:oxy="http://oxyplot.org/wpf" x:Class="LogsGraph.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="570" Width="800">
+        Title="LogsGraph" Height="570" Width="800">
     <Grid>
 
         <!-- Вкладки -->
-        <TabControl>
+        <TabControl Margin="0,2,0,0">
             <TabItem Header="Импорт данных">
-                <Grid Background="#FFE5E5E5">
+                <Grid >
                     <local:DataParser ></local:DataParser>
                 </Grid>
             </TabItem>
             <TabItem Header="Графики">
-                <Grid Background="#FF00E5E5">
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="34*"/>
+                        <ColumnDefinition Width="363*"/>
+                    </Grid.ColumnDefinitions>
                     <!-- Контейнер для графиков -->
-                    <local:GraphsList x:Name="Graphycs"></local:GraphsList>
+                    <local:GraphsList x:Name="Graphycs" Grid.ColumnSpan="2"></local:GraphsList>
                 </Grid>
             </TabItem>
         </TabControl>
