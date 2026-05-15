@@ -125,7 +125,7 @@ namespace LogsGraph
             saveFileDialog.FilterIndex = 1;
 
             //папка по умолчанию, берём текущую
-            saveFileDialog.DefaultDirectory = System.IO.Path.GetDirectoryName(WorkSpace.SavePath);
+            saveFileDialog.InitialDirectory = System.IO.Path.GetDirectoryName(WorkSpace.SavePath);
 
             // Показываем диалог
             // Возвращает true, если пользователь нажал "ОК", и false, если "Отмена"

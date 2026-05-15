@@ -107,8 +107,8 @@
                             </Grid.RowDefinitions>
                             <Button x:Name="BtnAdd" Grid.Column="0" Content="Добавить" Click="BtnAdd_Click" Margin="0,0,1,1"/>
                             <Button x:Name="BtnRemove" Grid.Column="1" Content="Удалить" Click="BtnRemove_Click" Margin="1,0,0,1"/>
-                            <Button x:Name="BtnTemplateSave" Grid.Row="1" Grid.Column="0" Content="Сохранить" Click="BtnAdd_Click" Margin="0,1,1,0"/>
-                            <Button x:Name="BtnTemplateLoad" Grid.Row="1" Grid.Column="1" Content="Загрузить" Click="BtnRemove_Click" Margin="1,1,0,0"/>
+                            <Button x:Name="BtnTemplateSave" Grid.Row="1" Grid.Column="0" Content="Сохранить" Click="BtnTemplateSave_Click" Margin="0,1,1,0"/>
+                            <Button x:Name="BtnTemplateLoad" Grid.Row="1" Grid.Column="1" Content="Загрузить" Click="BtnTemplateLoad_Click" Margin="1,1,0,0"/>
                         </Grid>
                     </Grid>
                 </Grid>

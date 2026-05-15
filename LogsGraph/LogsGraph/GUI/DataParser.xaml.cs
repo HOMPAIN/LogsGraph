@@ -58,7 +58,7 @@ namespace LogsGraph
             {
                 Templates.Remove(selected);
 
-                // ИСПРАВЛЕНИЕ 2: Явно обновляем список в ListBox после удаления
+                // Явно обновляем список в ListBox после удаления
                 SelectTemplate.Items.Refresh();
 
                 if (Templates.Count == 0)
@@ -86,11 +86,114 @@ namespace LogsGraph
 
             Templates.Add(newFormat);
 
-            // ИСПРАВЛЕНИЕ 3: Явно обновляем список в ListBox после добавления
+            // Явно обновляем список в ListBox после добавления
             SelectTemplate.Items.Refresh();
 
             // Сразу выбираем новый элемент, чтобы поля заполнились
             SelectTemplate.SelectedItem = newFormat;
+        }
+        //сохранить шаблон
+        private void BtnTemplateSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (!Directory.Exists("Templates"))
+            {
+                try
+                {
+                    Directory.CreateDirectory("Templates");
+                }
+                catch { }
+            }
+            if (SelectTemplate.SelectedItem is FileFormat selected)
+            {
+                // диалог выбора файла с данными
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+                // Настраиваем фильтр
+                saveFileDialog.Filter = "Файы шаблона (*.lgt)|*.lgt";
+
+                // Устанавливаем фильтр по умолчанию на "Все файлы"
+                saveFileDialog.FilterIndex = 1;
+
+                //папка по умолчанию
+                saveFileDialog.InitialDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates");
+
+                //имя файла по умолчанию -  название шаблона
+                saveFileDialog.FileName = selected.Name;
+
+                // Показываем диалог
+                // Возвращает true, если пользователь нажал "ОК", и false, если "Отмена"
+                bool? result = saveFileDialog.ShowDialog();
+
+                // Обрабатываем результат
+                if (result == true)
+                {
+                    // Полный путь к файлу (например: C:\Data\my_file.txt)
+                    string fullPath = saveFileDialog.FileName;
+
+                    // Только имя файла (например: my_file.txt)
+                    string fileName = saveFileDialog.SafeFileName;
+
+                    // Только расширение (например: .txt)
+                    string extension = System.IO.Path.GetExtension(fullPath);
+
+                    selected.Save(fullPath);
+                }
+                else
+                {
+                    // Пользователь нажал "Отмена" или закрыл окно
+                    // Ничего не делаем или логируем отмену
+                    return;
+                }
+
+            }
+        }
+        //загрузить шаблон
+        private void BtnTemplateLoad_Click(object sender, RoutedEventArgs e)
+        {
+            // диалог выбора файла с данными
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+
+            // Настраиваем фильтр
+            openFileDialog.Filter = "Файы проекта (*.lgt)|*.lgt";
+
+            // Устанавливаем фильтр по умолчанию на "Все файлы"
+            openFileDialog.FilterIndex = 1;
+
+            //папка по умолчанию, берём текущую
+            openFileDialog.InitialDirectory = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Templates");
+
+            // Показываем диалог
+            // Возвращает true, если пользователь нажал "ОК", и false, если "Отмена"
+            bool? result = openFileDialog.ShowDialog();
+
+            // Обрабатываем результат
+            if (result == true)
+            {
+                // Полный путь к файлу (например: C:\Data\my_file.txt)
+                string fullPath = openFileDialog.FileName;
+
+                // Только имя файла (например: my_file.txt)
+                string fileName = openFileDialog.SafeFileName;
+
+                // Только расширение (например: .txt)
+                string extension = System.IO.Path.GetExtension(fullPath);
+
+                FileFormat format = FileFormat.LoadFromFile(fullPath);
+
+                Templates.Add(format);
+
+                // Явно обновляем список в ListBox после добавления
+                SelectTemplate.Items.Refresh();
+
+                // Сразу выбираем новый элемент, чтобы поля заполнились
+                SelectTemplate.SelectedItem = format;
+            }
+            else
+            {
+                // Пользователь нажал "Отмена" или закрыл окно
+                // Ничего не делаем или логируем отмену
+                return;
+            }
         }
         //выбор шаблона в списке
         private void SelectTemplate_SelectionChanged(object sender, SelectionChangedEventArgs e)
