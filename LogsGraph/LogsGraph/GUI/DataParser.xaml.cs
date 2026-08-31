@@ -253,7 +253,11 @@ namespace LogsGraph
                     _currentTemplate.IgnoreRows = rows;
                 }
             }
-
+            else if (sender == TxDateFormat)
+            {
+                _currentTemplate.DateFormat = TxDateFormat.Text;
+            }
+            
             LoadData();
         }
 
