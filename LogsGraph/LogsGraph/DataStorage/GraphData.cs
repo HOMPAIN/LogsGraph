@@ -108,7 +108,7 @@ namespace LogsGraph.DataStorage
         /// </summary>
         /// <param name="_File">Путь к файлу</param>
         /// <param name="_Format">Настройки формата парсинга</param>
-        public static List<GraphData> ParseFile(string _File, FileFormat _Format)
+        /*public static List<GraphData> ParseFile(string _File, FileFormat _Format)
         {
             int graphs_count = 0;
             var resultGraphs = new List<GraphData>();
@@ -160,7 +160,7 @@ namespace LogsGraph.DataStorage
             }
 
             return resultGraphs;
-        }
+        }*/
         /// <summary>
         /// Асинхронно парсит текстовый файл с возможностью отмены.
         /// </summary>
@@ -212,7 +212,10 @@ namespace LogsGraph.DataStorage
                     {
                         graphs_count = names.Count - 1;
                         for (int i = 0; i < graphs_count; i++)
-                            resultGraphs.Add(new GraphData(names[i + 1]));
+                        {
+                            int column = i < _Format.XColumn ? i : (i + 1);
+                            resultGraphs.Add(new GraphData(names[column]));
+                        }
                     }
                 }
             }
@@ -257,10 +260,13 @@ namespace LogsGraph.DataStorage
                 }
                 else
                 {
-                    string commonX = (values.Length > 0) ? values[0] : "";
+                    if (_Format.XColumn >= values.Length) continue;
+                    if(values.Length <= 0) continue;
+                    string commonX = values[_Format.XColumn];
+
                     for (int j = 0; j < graphs_count; j++)
                     {
-                        int yIndex = j + 1;
+                        int yIndex = j < _Format.XColumn ? j : (j + 1);
                         if (yIndex < values.Length)
                         {
                             resultGraphs[j].Add(commonX, values[yIndex], _Format);

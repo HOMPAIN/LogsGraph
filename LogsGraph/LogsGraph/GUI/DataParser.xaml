@@ -16,7 +16,7 @@
         <Grid Grid.Column="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="50" />
-                <RowDefinition Height="250" />
+                <RowDefinition Height="270" />
                 <RowDefinition Height="4*" />
             </Grid.RowDefinitions>
             <!-- строка с адресом файоа -->
@@ -77,13 +77,17 @@
                                 <RadioButton x:Name="RbXSingle" GroupName="XGroup" Content="Да" Margin="0,0,10,0" Checked="Radio_X_Changed"/>
                                 <RadioButton x:Name="RbXMulti" GroupName="XGroup" Content="Нет" Checked="Radio_X_Changed"/>
                             </StackPanel>
+                            <!-- Номер столбца Х -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                <Label Content="Номер стобца X" Width="150"/>
+                                <TextBox x:Name="TxtXColumn" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
+                            </StackPanel>
 
                             <!-- формат времени -->
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                                 <Label Content="Формат даты" Width="150"/>
                                 <TextBox x:Name="TxDateFormat" TextWrapping="Wrap" Width="129" TextChanged="Input_Changed"/>
                             </StackPanel>
-                            <TextBlock TextWrapping="Wrap" Text="TextBlock"/>
                         </StackPanel>
                         <Label Grid.Row="1" x:Name="LoadStatus"  Content="Загрузка" Margin="0"></Label>
                     </Grid>

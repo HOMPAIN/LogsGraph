@@ -220,6 +220,7 @@ namespace LogsGraph
             RbXMulti.IsChecked = f.MultiX;
 
             TxDateFormat.Text = f.DateFormat;
+            TxtXColumn.Text = f.XColumn.ToString();
         }
         //сброс полей шаблона к значению по умолчанию
         private void ClearInputs()
@@ -256,6 +257,13 @@ namespace LogsGraph
             else if (sender == TxDateFormat)
             {
                 _currentTemplate.DateFormat = TxDateFormat.Text;
+            }
+            else if (sender == TxtXColumn)
+            {
+                if (int.TryParse(TxtXColumn.Text, out int x_column))
+                {
+                    _currentTemplate.XColumn = x_column;
+                }
             }
             
             LoadData();
